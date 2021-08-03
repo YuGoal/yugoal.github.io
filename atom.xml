@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yugoal.github.io</id>
     <title>Gridea</title>
-    <updated>2021-08-03T02:41:34.411Z</updated>
+    <updated>2021-08-03T02:58:09.878Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yugoal.github.io"/>
     <link rel="self" href="https://yugoal.github.io/atom.xml"/>
@@ -10,6 +10,15 @@
     <logo>https://yugoal.github.io/images/avatar.png</logo>
     <icon>https://yugoal.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[5种方法完美解决android软键盘挡住输入框方法详解]]></title>
+        <id>https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/</id>
+        <link href="https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/">
+        </link>
+        <updated>2021-08-03T02:46:00.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://cloud.tencent.com/developer/article/1741756">5种方法完美解决android软键盘挡住输入框方法详解</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[仿自如 App 裸眼 3D 效果]]></title>
         <id>https://yugoal.github.io/post/fang-zi-ru-app-luo-yan-3d-xiao-guo/</id>
@@ -220,6 +229,767 @@
 </code></pre>
 <p><a href="https://github.com/WinterRunner/gyroscope">陀螺仪图片转动</a><br>
 <a href="https://juejin.cn/post/6989227733410644005">自如裸眼3D原理</a>​</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[App启动优化]]></title>
+        <id>https://yugoal.github.io/post/app-qi-dong-you-hua/</id>
+        <link href="https://yugoal.github.io/post/app-qi-dong-you-hua/">
+        </link>
+        <updated>2021-07-29T08:18:38.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="启动分类">启动分类</h1>
+<ul>
+<li>冷启动
+<ul>
+<li>耗时最多
+<ul>
+<li>Click Event-&gt;IPC-&gt;Process.start-&gt;ActivityThread-&gt;bindApplication-&gt;</li>
+<li>LifeCycle-&gt;ViewRootImpl</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>热启动
+<ul>
+<li>最快
+<ul>
+<li>后台-&gt;前台</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>温启动<br>
+- 较快<br>
+- 重走生命周期LifeCycle</li>
+</ul>
+<h1 id="相关任务">相关任务</h1>
+<ul>
+<li>冷启动之前（系统任务，不能干预）</li>
+<li>启动App</li>
+<li>加载空白window</li>
+<li>创建进程</li>
+<li>随后任务
+<ul>
+<li>加载布局</li>
+<li>布置屏幕</li>
+<li>首页绘制</li>
+</ul>
+</li>
+</ul>
+<h1 id="优化方向">优化方向</h1>
+<p>Application+LifeCycle</p>
+<h1 id="优化方法">优化方法</h1>
+<h3 id="1测量启动时间">1.测量启动时间</h3>
+<h4 id="adb-命令线下使用-不够严谨">adb 命令（线下使用、不够严谨）</h4>
+<ul>
+<li>adb shell am start -W packagename/MainActivity</li>
+</ul>
+<h4 id="手动打点精确可带到线上">手动打点（精确，可带到线上）</h4>
+<ul>
+<li>通过在启动和 结束的地方埋点然后就行时间差值计算（采用Feed第一条数据，避免onWindowFoucsChanged 首帧时间误区，onWindowFoucsChanged 是绘制首帧的时间，并不是界面展示到用户面前的时间）</li>
+</ul>
+<h3 id="2优化分析工具">2.优化分析工具</h3>
+<h4 id="traceview">traceview</h4>
+<ul>
+<li>使用方式
+<ul>
+<li>开始：Debug.startMethodTracing(&quot;报告文件名&quot;);</li>
+<li>结束：Debug.stopMethodTracing();</li>
+<li>生成文件地址：sd卡，Android/data/packagename/files/报告文件名</li>
+</ul>
+</li>
+<li>优点<br>
+- 图表显示数据内容详细全面</li>
+<li>缺点<br>
+- 运行时开销严重，App变慢，导致原本不会卡顿的地方变卡顿，带偏优化方向</li>
+</ul>
+<h4 id="systrace">systrace</h4>
+<ul>
+<li>结合Android内核数据，生成html报告</li>
+<li>api18 以上使用</li>
+<li>使用方式</li>
+<li>优点
+<ul>
+<li>轻量级</li>
+<li>反应cpu利用率</li>
+<li>cputime与walltime区别
+<ul>
+<li>walltime代码执行时间</li>
+<li>cputime代码消耗cpu时间（重点指标）</li>
+<li>举例：锁冲突（一个不耗时的方法需要拿到锁才能执行，在等待锁的时候代码后停在那等待，这时候是没有消耗cpu的，这样就造成walltime时间变长）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="3aop获取方法耗时">3.AOP获取方法耗时</h3>
+<p>无侵入性</p>
+<h4 id="aspectj使用">AspectJ使用</h4>
+<h1 id="启动优化">启动优化</h1>
+<p>开屏优化<br>
+把空白window替换为App图标或启动页<br>
+异步优化<br>
+Application中的代码根据需求来使用多线程执行。<br>
+线程池核心数量定义：Math.max(2,Math.min(CPU_COUNT-1,4))<br>
+​</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Android 屏幕适配方案]]></title>
+        <id>https://yugoal.github.io/post/android-ping-mu-gua-pei-fang-an/</id>
+        <link href="https://yugoal.github.io/post/android-ping-mu-gua-pei-fang-an/">
+        </link>
+        <updated>2021-05-11T15:04:30.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="官方dp的缺点">官方dp的缺点</h2>
+<blockquote>
+<p>px = dp * (dpi/160)</p>
+</blockquote>
+<blockquote>
+<p>dpi= √ (宽^2 + 高^2) / 尺寸</p>
+</blockquote>
+<p>问题就出在dpi上面，各厂商并没有按照谷歌的标准走，就算分辨率宽高是标准的，但是手机尺寸各种各样，这样就导致dpi不符合标准，因为dpi不符合标准，所以dp就不太标准。</p>
+<h2 id="适配方案">适配方案</h2>
+<p>布局组件适配<br>
+使用dp<br>
+使用相对布局或线性布局<br>
+使用warp_content,match_parent,权重<br>
+使用minWidth,minHeight,lines等<br>
+dimens使用<br>
+布局适配（布局别名：同一个activity拥有多个布局时，可以通过values建立不同的文件夹，布局别名相同）<br>
+代码适配<br>
+今日头条方案：宽度像素/设计稿dpi求出density<br>
+makexml生成不同分辨率方案</p>
+<pre><code>import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
+/**
+ * Created by lenovo on 2016/12/2.
+ */
+
+public class MakeXml {
+    // 生成地址 C盘layoutroot目录下
+    private final static String rootPath = &quot;C:\\layoutroot\\values-{0}x{1}\\&quot;;
+
+    /**
+     * 设置基准分辨率
+     * 一般标注按照多大的图标，这里我们就设置多大尺寸
+     */
+    private final static float dw = 720f;
+    private final static float dh = 1280f;
+
+    private final static String WTemplate = &quot;&lt;dimen name=\&quot;x{0}\&quot;&gt;{1}px&lt;/dimen&gt;\n&quot;;
+    private final static String HTemplate = &quot;&lt;dimen name=\&quot;y{0}\&quot;&gt;{1}px&lt;/dimen&gt;\n&quot;;
+
+    // 手机分辨率
+    public static void main(String [] args){
+        makeString(320, 480);
+        makeString(480, 800);
+        makeString(480, 854);
+        makeString(540, 960);
+        makeString(600, 1024);
+        makeString(720, 1184);
+        makeString(720, 1196);
+        makeString(720, 1280);
+        makeString(768, 1024);
+        makeString(800, 1280);
+        makeString(900, 1440);
+        makeString(1080, 1812);
+        makeString(1080, 1920);
+        makeString(1440, 2560);
+
+    }
+
+    public static void makeString(int w, int h) {
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;utf-8\&quot;?&gt;\n&quot;);
+        sb.append(&quot;&lt;resources&gt;&quot;);
+        float cellw = w / dw;
+        for (int i = 1; i &lt; dw; i++) {
+            sb.append(WTemplate.replace(&quot;{0}&quot;, i + &quot;&quot;).replace(&quot;{1}&quot;, change(cellw * i) + &quot;&quot;));
+        }
+        sb.append(WTemplate.replace(&quot;{0}&quot;, &quot;720&quot;).replace(&quot;{1}&quot;, w + &quot;&quot;));
+        sb.append(&quot;&lt;/resources&gt;&quot;);
+
+        StringBuffer sb2 = new StringBuffer();
+        sb2.append(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;utf-8\&quot;?&gt;\n&quot;);
+        sb2.append(&quot;&lt;resources&gt;&quot;);
+        float cellh = h / dh;
+        for (int i = 1; i &lt; dh; i++) {
+            sb2.append(HTemplate.replace(&quot;{0}&quot;, i + &quot;&quot;).replace(&quot;{1}&quot;, change(cellh * i) + &quot;&quot;));
+        }
+        sb2.append(HTemplate.replace(&quot;{0}&quot;, &quot;1280&quot;).replace(&quot;{1}&quot;, h + &quot;&quot;));
+        sb2.append(&quot;&lt;/resources&gt;&quot;);
+
+        String path = rootPath.replace(&quot;{0}&quot;, h + &quot;&quot;).replace(&quot;{1}&quot;, w + &quot;&quot;);
+        File rootFile = new File(path);
+        if (!rootFile.exists()) {
+            rootFile.mkdirs();
+        }
+        File layxFile = new File(path + &quot;lay_x.xml&quot;);
+        File layyFile = new File(path + &quot;lay_y.xml&quot;);
+        try {
+            PrintWriter pw = new PrintWriter(new FileOutputStream(layxFile));
+            pw.print(sb.toString());
+            pw.close();
+            pw = new PrintWriter(new FileOutputStream(layyFile));
+            pw.print(sb2.toString());
+            pw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static float change(float a) {
+        int temp = (int) (a * 100);
+        return temp / 100f;
+    }
+
+}
+</code></pre>
+<h2 id="刘海屏">刘海屏</h2>
+<p>查看各厂商文档<br>
+​</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[App黑白化代码实现]]></title>
+        <id>https://yugoal.github.io/post/app-hei-bai-hua-dai-ma-shi-xian/</id>
+        <link href="https://yugoal.github.io/post/app-hei-bai-hua-dai-ma-shi-xian/">
+        </link>
+        <updated>2021-04-06T02:51:44.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>public class BaseApp extends Application implements Application.ActivityLifecycleCallbacks{
+    
+    @Override
+    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);//关键代码
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        activity.getWindow().getDecorView().setLayerType(View.LAYER_TYPE_HARDWARE, paint);
+    }
+
+    @Override
+    public void onActivityStarted(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityResumed(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityPaused(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivityStopped(@NonNull Activity activity) {
+
+    }
+
+    @Override
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+
+    }
+
+    @Override
+    public void onActivityDestroyed(@NonNull Activity activity) {
+
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Android与webview的js交互]]></title>
+        <id>https://yugoal.github.io/post/android-yu-webview-de-js-jiao-hu/</id>
+        <link href="https://yugoal.github.io/post/android-yu-webview-de-js-jiao-hu/">
+        </link>
+        <updated>2021-03-23T07:47:59.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="webview调用java方法">WebView调用Java方法</h2>
+<ol>
+<li>允许WebView加载js</li>
+</ol>
+<pre><code class="language-java">webSettings.setJavaScriptEnabled(true);
+</code></pre>
+<ol start="2">
+<li>编写js接口类</li>
+</ol>
+<pre><code class="language-java">public class WebAppInterface {
+        @JavascriptInterface
+        public String getUrl() {
+            return photo;
+        }
+    }
+</code></pre>
+<ol start="3">
+<li>Webview添加js接口</li>
+</ol>
+<pre><code class="language-java">webview.addJavascriptInterface(new WebAppInterface(), &quot;Android&quot;);
+</code></pre>
+<h2 id="android调用js方法">Android调用js方法</h2>
+<p>loadUrl方法调用js</p>
+<pre><code class="language-java">webview.loadUrl(javascript:if(window.setUrl)setUrl{'参数'});
+//setUrl 是js的方法名
+</code></pre>
+<h2 id="js调用android方法">js调用Android方法</h2>
+<pre><code class="language-javascript">var url = window.Android.getUrl();
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[DJI-SDK Hotpoint Mission 实现思路]]></title>
+        <id>https://yugoal.github.io/post/dji-sdk-hotpoint-mission-shi-xian-si-lu/</id>
+        <link href="https://yugoal.github.io/post/dji-sdk-hotpoint-mission-shi-xian-si-lu/">
+        </link>
+        <updated>2021-03-03T02:54:50.000Z</updated>
+        <content type="html"><![CDATA[<p><em>功能概念可以看看这篇文章</em><a href="https://www.yuque.com/kiwi/ios/ir62ri"><em>https://www.yuque.com/kiwi/ios/ir62ri</em></a>_ 描述的比较详细。_</p>
+<h2 id="1时间轴实现绕点飞行拍照">1.时间轴实现绕点飞行拍照</h2>
+<p>可直接参考dji demo里面的时间轴做法添加Hotpoint任务和拍照任务执行。<br>
+缺点：兼容性不高，部分机型不适合。</p>
+<h2 id="2hotpoint实现绕点飞行定时器实现拍照和录像">2.Hotpoint实现绕点飞行，定时器实现拍照和录像</h2>
+<ol>
+<li>使用Hotpoint 实现无人机的绕点飞行。</li>
+<li>Hotpoint开始执行时启动定时器定时拍照。</li>
+</ol>
+<pre><code class="language-java">//1.创建hotpointmission
+HotpointMission hotpointMission = new HotpointMission();
+hotpointMission.setAltitude(100);
+//....填写各项参数
+//2.创建执行器
+HotpointMissionOperator hotpointMissionOperator = new HotpointMissionOperator;
+hotpointMissionOperator.addListener(new HotpointMissionOperatorListener() {
+            @Override
+            public void onExecutionUpdate(HotpointMissionEvent hotpointMissionEvent) {
+                if (hotpointMissionEvent.getCurrentState().getName().equals(&quot;EXECUTING&quot;)) {
+                    if (timer == null) {
+                        timer = new RxTimer();
+                        timer.startTimmer(hotPointBaseSetFragment.getSecond(), new RxTimer.RxTimerNextListener() {
+                            @Override
+                            public void onTimerNext(long number) {
+                                Log.d(TAG, &quot;onTimerNext: &quot; + number);
+                                if (hotPointBaseSetFragment.isRecode()) {
+                                    //视频
+                                    if (!isRecode) {
+                                        LxApplication.getProductInstance().getCamera().setMode(SettingsDefinitions.CameraMode.RECORD_VIDEO, new CommonCallbacks.CompletionCallback() {
+                                            @Override
+                                            public void onResult(DJIError djiError) {
+                                                if (null == djiError) {
+                                                    LxApplication.getProductInstance().getCamera().startRecordVideo(new CommonCallbacks.CompletionCallback() {
+                                                        @Override
+                                                        public void onResult(DJIError djiError) {
+                                                            if (null == djiError) {
+                                                                isRecode = true;
+                                                            } else {
+                                                                Log.d(TAG, &quot;onResult: &quot; + djiError.getDescription());
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    LxApplication.getProductInstance().getCamera().setMode(SettingsDefinitions.CameraMode.SHOOT_PHOTO, new CommonCallbacks.CompletionCallback() {
+                                        @Override
+                                        public void onResult(DJIError djiError) {
+                                            if (null == djiError) {
+                                                //拍照
+                                                LxApplication.getProductInstance()
+                                                        .getCamera().startShootPhoto(new CommonCallbacks.CompletionCallback() {
+                                                    @Override
+                                                    public void onResult(DJIError djiError) {
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+                Log.d(TAG, &quot;onExecutionUpdate: &quot; + hotpointMissionEvent.getCurrentState().getName());
+            }
+
+            @Override
+            public void onExecutionStart() {
+                Log.d(TAG, &quot;onExecutionStart: &quot;);
+
+            }
+
+            @Override
+            public void onExecutionFinish(DJIError djiError) {
+                Log.d(TAG, &quot;onExecutionFinish: &quot; + djiError.getDescription());
+            }
+        });
+        hotpointMissionOperator.startMission(hotpointMission, djiError -&gt; Log.d(TAG, &quot;onResult: &quot; + djiError.getDescription()));
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[RabbitMQ—Android客户端]]></title>
+        <id>https://yugoal.github.io/post/rabbitmq-android-ke-hu-duan/</id>
+        <link href="https://yugoal.github.io/post/rabbitmq-android-ke-hu-duan/">
+        </link>
+        <updated>2017-09-10T02:56:28.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="工作原理">工作原理</h2>
+<p><a href="http://rabbitmq.mr-ping.com/description.html">RabbitMQ-中文文档</a><br>
+<a href="https://www.rabbitmq.com/getstarted.html">RabbitMQ-官网</a><br>
+上面的网站详细的描述了整个框架。建议没接触过RabbitMQ的同学先看看。了解原理后，就直接看下面的代码吧。</p>
+<h2 id="生产者">生产者</h2>
+<p>由于后台缘故，这里不需要exchange。想要看完整的流程的同学可以去看<a href="http://www.jianshu.com/p/e138a79d726c">这篇文章</a>。<br>
+注意要在子线程中运行</p>
+<pre><code>ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST);//ip地址
+        factory.setPort(PORT);//端口号
+        factory.setUsername(&quot;test&quot;);
+        factory.setPassword(&quot;test&quot;);
+        //创建一个新连接
+        Connection connection = factory.newConnection();
+        //创建一个通道
+        Channel channel = connection.createChannel();
+        //声明一个队列
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        //发送消息
+        channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes(&quot;UTF-8&quot;));
+        //消息发送完成后，需要关闭通道和连接
+        channel.close();
+        connection.close();
+</code></pre>
+<h2 id="消费者">消费者</h2>
+<pre><code>ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST);
+        factory.setPort(PORT);
+        factory.setUsername(&quot;test&quot;);
+        factory.setPassword(&quot;test&quot;);
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+
+        //声明一个队列
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        Consumer consumer = new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body, &quot;UTF-8&quot;);
+                System.out.println(&quot;RecvLogsTopic1 [x] Received '&quot; + envelope.getRoutingKey() + &quot;':'&quot; + message + &quot;'&quot;);
+            }
+        };
+        channel.basicConsume(QUEUE_NAME, true, consumer);
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[调用百度、高德地图App，百度地图网页版，App定位]]></title>
+        <id>https://yugoal.github.io/post/diao-yong-bai-du-gao-de-di-tu-appbai-du-di-tu-wang-ye-ban-app-ding-wei/</id>
+        <link href="https://yugoal.github.io/post/diao-yong-bai-du-gao-de-di-tu-appbai-du-di-tu-wang-ye-ban-app-ding-wei/">
+        </link>
+        <updated>2017-07-20T08:55:44.000Z</updated>
+        <summary type="html"><![CDATA[<h1 id="1首先判断是否安装了目标地图app">1.首先判断是否安装了目标地图App</h1>
+<pre><code>//判断是否安装目标应用
+public static boolean isInstallByread(String packageName) {
+    return new File(&quot;/data/data/&quot; + packageName)
+            .exists();
+}
+</code></pre>
+<h1 id="2调用百度地图app">2.调用百度地图App</h1>
+<pre><code>/**
+ * 调起百度客户端 自定义打点
+ * @param activity
+ * @param content 目的地(如：天安门) 
+ * mode 导航方式
+ */
+public static void openBaiduMarkerMap(Context activity, String content) {
+    Intent intent = new Intent();
+    intent.setData(Uri.parse(&quot;baidumap://map/direction?region=&amp;origin=&amp;destination=&quot;+content+&quot;&amp;mode=driving&quot;));
+    activity.startActivity(intent);
+}
+</code></pre>
+<blockquote>
+<p>调起百度地图官方<a href="http://lbsyun.baidu.com/index.php?title=uri/api/android">http://lbsyun.baidu.com/index.php?title=uri/api/android</a></p>
+</blockquote>
+<h1 id="3调用高德地图app">3.调用高德地图App</h1>
+<pre><code>/**
+ * 启动高德App进行导航
+ * @param poiname 非必填 POI 名称
+ * @param lat 必填 纬度
+ * @param lon 必填 经度
+ * @param dev 必填 是否偏移(0:lat 和 lon 是已经加密后的,不需要国测加密; 1:需要国测加密)
+ * @param style 必填 导航方式(0 速度快; 1 费用少; 2 路程短; 3 不走高速；4 躲避拥堵；5 不走高速且避免收费；6 不走高速且躲避拥堵；7 躲避收费和拥堵；8 不走高速躲避收费和拥堵))
+ */
+public static  void goToNaviActivity(Context context, String poiname , String lat , String lon , String dev , String style){
+    StringBuffer stringBuffer  = new StringBuffer(&quot;androidamap://navi?sourceApplication=&quot;)
+            .append(AppInfoUtils.getApplicationName());
+    if (!TextUtils.isEmpty(poiname)){
+        stringBuffer.append(&quot;&amp;poiname=&quot;).append(poiname);
+    }
+    stringBuffer
+            .append(&quot;&amp;lat=&quot;).append(lat)
+            .append(&quot;&amp;lon=&quot;).append(lon)
+            .append(&quot;&amp;destination=&quot;).append(context)
+            .append(&quot;&amp;dev=&quot;).append(dev)
+            .append(&quot;&amp;style=&quot;).append(style);
+
+    Intent intent = new Intent(&quot;android.intent.action.VIEW&quot;, android.net.Uri.parse(stringBuffer.toString()));
+    intent.setPackage(&quot;com.autonavi.minimap&quot;);
+    context.startActivity(intent);
+}
+</code></pre>
+<pre><code>/**
+     * 启动高德App进行导航 (直接传地址，无需经纬度)
+     */
+    public static void openNaviActivity(Context context, String mDestination) {
+        try {
+            Intent intent = Intent.getIntent(&quot;androidamap://route?sourceApplication=softname&quot; + &quot;&amp;sname=我的位置&amp;dname=&quot; + mDestination + &quot;&amp;dev=0&amp;m=0&amp;t=1&quot;);
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            intent.setPackage(&quot;com.autonavi.minimap&quot;);// pkg=com.autonavi.minimap
+            intent.addCategory(&quot;android.intent.category.DEFAULT&quot;);
+            context.startActivity(intent);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<blockquote>
+<p>更新：使用地址调用地图，无需经纬度</p>
+</blockquote>
+<h1 id="4调用百度地图网页版必须填写起点和终点">4.调用百度地图网页版(必须填写起点和终点)</h1>
+<pre><code>/**
+ * 打开百度网页版 导航
+ * @param activity
+ * @param location 起点位置
+ * @param content 目的地
+ */
+public static void openBrosserNaviMap(Context activity, Location location,String content) {
+    Uri webpage = Uri.parse(&quot;http://api.map.baidu.com/marker?location=&quot;+
+            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+
+            &quot;&amp;title=&quot;+content+
+            &quot;&amp;content=&quot;+content+
+            &quot;&amp;output=html&quot;);
+    Uri mapUri = Uri.parse(&quot;http://api.map.baidu.com/direction?origin=latlng:&quot; +
+            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+ &quot;|name:&quot; + content + &quot;&amp;destination=latlng:&quot; +
+            &quot;|name:&quot; + content + &quot;&amp;mode=driving&amp;region=&quot;+
+            &quot;&amp;output=html&quot;);
+    Log.d(&quot;百度地图&quot;, &quot;openBrosserNaviMap: &quot;+webpage.toString());
+
+    Intent webIntent = new Intent(Intent.ACTION_VIEW,webpage);
+    activity.startActivity(webIntent);
+}
+</code></pre>
+<h1 id="5app定位">5.App定位</h1>
+<h3 id="1获取位置管理器">1.获取位置管理器</h3>
+<pre><code>locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+</code></pre>
+<h3 id="2获取位置提供器gps或是network">2.获取位置提供器GPS或是NetWork</h3>
+<pre><code>List&lt;String&gt; providers = locationManager.getProviders(true);
+    if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+        //如果是网络定位
+        locationProvider = LocationManager.NETWORK_PROVIDER;
+       
+    } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
+        //如果是GPS定位
+        locationProvider = LocationManager.GPS_PROVIDER;
+       
+    } else {
+        ToastUtils.showToast(&quot;没有可用的位置提供器&quot;);
+        return;
+    }
+</code></pre>
+<h3 id="3获取上次的位置一般第一次运行此值为null">3.获取上次的位置，一般第一次运行，此值为null</h3>
+<pre><code>if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &amp;&amp; ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+       
+        return;
+    }
+    mLocation = locationManager.getLastKnownLocation(locationProvider);
+    if (mLocation != null) {
+        Log.d(TAG, &quot;onLocationChanged: &quot; + mLocation);
+      
+    } else {
+        // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
+        locationManager.requestLocationUpdates(locationProvider, 0, 0, mListener);
+    }
+</code></pre>
+<h3 id="4位置监听器">4.位置监听器</h3>
+<pre><code>LocationListener mListener = new LocationListener() {    @Override    public void onStatusChanged(String provider, int status, Bundle extras) {    }    @Override    public void onProviderEnabled(String provider) {    }    @Override    public void onProviderDisabled(String provider) {    }    // 如果位置发生变化，重新显示    @Override    public void onLocationChanged(Location location) {        mLocation = location;        String address = &quot;纬度：&quot; + location.getLatitude() + &quot;经度：&quot; + location.getLongitude();        Log.d(TAG, &quot;onLocationChanged: &quot; + address);        dialog.dismiss();    }};
+</code></pre>
+<h1 id="最后别忘了申请系统权限">最后！别忘了申请系统权限！！！</h1>
+]]></summary>
+        <content type="html"><![CDATA[<h1 id="1首先判断是否安装了目标地图app">1.首先判断是否安装了目标地图App</h1>
+<pre><code>//判断是否安装目标应用
+public static boolean isInstallByread(String packageName) {
+    return new File(&quot;/data/data/&quot; + packageName)
+            .exists();
+}
+</code></pre>
+<h1 id="2调用百度地图app">2.调用百度地图App</h1>
+<pre><code>/**
+ * 调起百度客户端 自定义打点
+ * @param activity
+ * @param content 目的地(如：天安门) 
+ * mode 导航方式
+ */
+public static void openBaiduMarkerMap(Context activity, String content) {
+    Intent intent = new Intent();
+    intent.setData(Uri.parse(&quot;baidumap://map/direction?region=&amp;origin=&amp;destination=&quot;+content+&quot;&amp;mode=driving&quot;));
+    activity.startActivity(intent);
+}
+</code></pre>
+<blockquote>
+<p>调起百度地图官方<a href="http://lbsyun.baidu.com/index.php?title=uri/api/android">http://lbsyun.baidu.com/index.php?title=uri/api/android</a></p>
+</blockquote>
+<h1 id="3调用高德地图app">3.调用高德地图App</h1>
+<pre><code>/**
+ * 启动高德App进行导航
+ * @param poiname 非必填 POI 名称
+ * @param lat 必填 纬度
+ * @param lon 必填 经度
+ * @param dev 必填 是否偏移(0:lat 和 lon 是已经加密后的,不需要国测加密; 1:需要国测加密)
+ * @param style 必填 导航方式(0 速度快; 1 费用少; 2 路程短; 3 不走高速；4 躲避拥堵；5 不走高速且避免收费；6 不走高速且躲避拥堵；7 躲避收费和拥堵；8 不走高速躲避收费和拥堵))
+ */
+public static  void goToNaviActivity(Context context, String poiname , String lat , String lon , String dev , String style){
+    StringBuffer stringBuffer  = new StringBuffer(&quot;androidamap://navi?sourceApplication=&quot;)
+            .append(AppInfoUtils.getApplicationName());
+    if (!TextUtils.isEmpty(poiname)){
+        stringBuffer.append(&quot;&amp;poiname=&quot;).append(poiname);
+    }
+    stringBuffer
+            .append(&quot;&amp;lat=&quot;).append(lat)
+            .append(&quot;&amp;lon=&quot;).append(lon)
+            .append(&quot;&amp;destination=&quot;).append(context)
+            .append(&quot;&amp;dev=&quot;).append(dev)
+            .append(&quot;&amp;style=&quot;).append(style);
+
+    Intent intent = new Intent(&quot;android.intent.action.VIEW&quot;, android.net.Uri.parse(stringBuffer.toString()));
+    intent.setPackage(&quot;com.autonavi.minimap&quot;);
+    context.startActivity(intent);
+}
+</code></pre>
+<pre><code>/**
+     * 启动高德App进行导航 (直接传地址，无需经纬度)
+     */
+    public static void openNaviActivity(Context context, String mDestination) {
+        try {
+            Intent intent = Intent.getIntent(&quot;androidamap://route?sourceApplication=softname&quot; + &quot;&amp;sname=我的位置&amp;dname=&quot; + mDestination + &quot;&amp;dev=0&amp;m=0&amp;t=1&quot;);
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            intent.setPackage(&quot;com.autonavi.minimap&quot;);// pkg=com.autonavi.minimap
+            intent.addCategory(&quot;android.intent.category.DEFAULT&quot;);
+            context.startActivity(intent);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+</code></pre>
+<blockquote>
+<p>更新：使用地址调用地图，无需经纬度</p>
+</blockquote>
+<h1 id="4调用百度地图网页版必须填写起点和终点">4.调用百度地图网页版(必须填写起点和终点)</h1>
+<pre><code>/**
+ * 打开百度网页版 导航
+ * @param activity
+ * @param location 起点位置
+ * @param content 目的地
+ */
+public static void openBrosserNaviMap(Context activity, Location location,String content) {
+    Uri webpage = Uri.parse(&quot;http://api.map.baidu.com/marker?location=&quot;+
+            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+
+            &quot;&amp;title=&quot;+content+
+            &quot;&amp;content=&quot;+content+
+            &quot;&amp;output=html&quot;);
+    Uri mapUri = Uri.parse(&quot;http://api.map.baidu.com/direction?origin=latlng:&quot; +
+            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+ &quot;|name:&quot; + content + &quot;&amp;destination=latlng:&quot; +
+            &quot;|name:&quot; + content + &quot;&amp;mode=driving&amp;region=&quot;+
+            &quot;&amp;output=html&quot;);
+    Log.d(&quot;百度地图&quot;, &quot;openBrosserNaviMap: &quot;+webpage.toString());
+
+    Intent webIntent = new Intent(Intent.ACTION_VIEW,webpage);
+    activity.startActivity(webIntent);
+}
+</code></pre>
+<h1 id="5app定位">5.App定位</h1>
+<h3 id="1获取位置管理器">1.获取位置管理器</h3>
+<pre><code>locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+</code></pre>
+<h3 id="2获取位置提供器gps或是network">2.获取位置提供器GPS或是NetWork</h3>
+<pre><code>List&lt;String&gt; providers = locationManager.getProviders(true);
+    if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+        //如果是网络定位
+        locationProvider = LocationManager.NETWORK_PROVIDER;
+       
+    } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
+        //如果是GPS定位
+        locationProvider = LocationManager.GPS_PROVIDER;
+       
+    } else {
+        ToastUtils.showToast(&quot;没有可用的位置提供器&quot;);
+        return;
+    }
+</code></pre>
+<h3 id="3获取上次的位置一般第一次运行此值为null">3.获取上次的位置，一般第一次运行，此值为null</h3>
+<pre><code>if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &amp;&amp; ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+       
+        return;
+    }
+    mLocation = locationManager.getLastKnownLocation(locationProvider);
+    if (mLocation != null) {
+        Log.d(TAG, &quot;onLocationChanged: &quot; + mLocation);
+      
+    } else {
+        // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
+        locationManager.requestLocationUpdates(locationProvider, 0, 0, mListener);
+    }
+</code></pre>
+<h3 id="4位置监听器">4.位置监听器</h3>
+<pre><code>LocationListener mListener = new LocationListener() {    @Override    public void onStatusChanged(String provider, int status, Bundle extras) {    }    @Override    public void onProviderEnabled(String provider) {    }    @Override    public void onProviderDisabled(String provider) {    }    // 如果位置发生变化，重新显示    @Override    public void onLocationChanged(Location location) {        mLocation = location;        String address = &quot;纬度：&quot; + location.getLatitude() + &quot;经度：&quot; + location.getLongitude();        Log.d(TAG, &quot;onLocationChanged: &quot; + address);        dialog.dismiss();    }};
+</code></pre>
+<h1 id="最后别忘了申请系统权限">最后！别忘了申请系统权限！！！</h1>
+<!-- more -->
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[WebViewjavascriptBridge 关于setWebViewClient 拦截后JS失效的问题]]></title>
+        <id>https://yugoal.github.io/post/webviewjavascriptbridge-guan-yu-setwebviewclient-lan-jie-hou-js-shi-xiao-de-wen-ti/</id>
+        <link href="https://yugoal.github.io/post/webviewjavascriptbridge-guan-yu-setwebviewclient-lan-jie-hou-js-shi-xiao-de-wen-ti/">
+        </link>
+        <updated>2017-03-01T02:57:18.000Z</updated>
+        <content type="html"><![CDATA[<p><strong>1.添加请求头</strong></p>
+<pre><code>Map&lt;String,String&gt; extraHeaders = new HashMap&lt;String, String&gt;();
+extraHeaders.put(&quot;auth&quot;, referer);
+extraHeaders.put(&quot;imei&quot;, tm.getDeviceId());
+extraHeaders.put(&quot;cookie&quot;,&quot;JSESSIONID=&quot;+jsid);
+
+mWebview.loadurl(url,extraHeaders);
+
+url:加载的H5链接
+extraHeaders: 请求头数据
+</code></pre>
+<p><strong>2.关于setWebViewClient 拦截后JS失效的问题</strong></p>
+<p>因为webViewjavascriptBridge 初始化时会默认设置一个BridgeWebViewClient，所以当我们在代码中再次设置WebViewClient会覆盖掉之前的方法，这样会导致JS失效。<br>
+解决方法：</p>
+<pre><code>@Override
+public boolean shouldOverrideUrlLoading(WebView view, String url) {
+  try{
+    url = URLDecoder.decode(url,&quot;UTF-8&quot;);
+  }catch(UnsupportedEncodingException e) {
+    e.printStackTrace();
+  }
+  if(url.startsWith(BridgeUtil.YY_RETURN_DATA)) {//如果是返回数据
+    webView.handlerReturnData(url);
+    return true;
+  }else if(url.startsWith(BridgeUtil.YY_OVERRIDE_SCHEMA)) {//
+    webView.flushMessageQueue();
+  return true;
+  }else{
+    view.loadUrl(url,webView.getMap());//重写最后一步
+    return super.shouldOverrideUrlLoading(view, url);
+  }
+}
+</code></pre>
 ]]></content>
     </entry>
 </feed>

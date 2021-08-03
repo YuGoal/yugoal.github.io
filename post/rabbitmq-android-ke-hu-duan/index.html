@@ -1,0 +1,204 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RabbitMQ—Android客户端 | Gridea</title>
+<link rel="shortcut icon" href="https://yugoal.github.io/favicon.ico?v=1627959479122">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yugoal.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="RabbitMQ—Android客户端 | Gridea - Atom Feed" href="https://yugoal.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="工作原理
+RabbitMQ-中文文档
+RabbitMQ-官网
+上面的网站详细的描述了整个框架。建议没接触过RabbitMQ的同学先看看。了解原理后，就直接看下面的代码吧。
+生产者
+由于后台缘故，这里不需要exchange。想要看完整的流程的..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yugoal.github.io">
+  <img class="avatar" src="https://yugoal.github.io/images/avatar.png?v=1627959479122" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              RabbitMQ—Android客户端
+            </h2>
+            <div class="post-info">
+              <span>
+                2017-09-10
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="工作原理">工作原理</h2>
+<p><a href="http://rabbitmq.mr-ping.com/description.html">RabbitMQ-中文文档</a><br>
+<a href="https://www.rabbitmq.com/getstarted.html">RabbitMQ-官网</a><br>
+上面的网站详细的描述了整个框架。建议没接触过RabbitMQ的同学先看看。了解原理后，就直接看下面的代码吧。</p>
+<h2 id="生产者">生产者</h2>
+<p>由于后台缘故，这里不需要exchange。想要看完整的流程的同学可以去看<a href="http://www.jianshu.com/p/e138a79d726c">这篇文章</a>。<br>
+注意要在子线程中运行</p>
+<pre><code>ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST);//ip地址
+        factory.setPort(PORT);//端口号
+        factory.setUsername(&quot;test&quot;);
+        factory.setPassword(&quot;test&quot;);
+        //创建一个新连接
+        Connection connection = factory.newConnection();
+        //创建一个通道
+        Channel channel = connection.createChannel();
+        //声明一个队列
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        //发送消息
+        channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes(&quot;UTF-8&quot;));
+        //消息发送完成后，需要关闭通道和连接
+        channel.close();
+        connection.close();
+</code></pre>
+<h2 id="消费者">消费者</h2>
+<pre><code>ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(HOST);
+        factory.setPort(PORT);
+        factory.setUsername(&quot;test&quot;);
+        factory.setPassword(&quot;test&quot;);
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+
+        //声明一个队列
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        Consumer consumer = new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body, &quot;UTF-8&quot;);
+                System.out.println(&quot;RecvLogsTopic1 [x] Received '&quot; + envelope.getRoutingKey() + &quot;':'&quot; + message + &quot;'&quot;);
+            }
+        };
+        channel.basicConsume(QUEUE_NAME, true, consumer);
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86">工作原理</a></li>
+<li><a href="#%E7%94%9F%E4%BA%A7%E8%80%85">生产者</a></li>
+<li><a href="#%E6%B6%88%E8%B4%B9%E8%80%85">消费者</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yugoal.github.io/post/diao-yong-bai-du-gao-de-di-tu-appbai-du-di-tu-wang-ye-ban-app-ding-wei/">
+              <h3 class="post-title">
+                调用百度、高德地图App，百度地图网页版，App定位
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yugoal.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

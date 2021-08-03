@@ -1,0 +1,275 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Android 屏幕适配方案 | Gridea</title>
+<link rel="shortcut icon" href="https://yugoal.github.io/favicon.ico?v=1627959479122">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yugoal.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Android 屏幕适配方案 | Gridea - Atom Feed" href="https://yugoal.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="官方dp的缺点
+
+px = dp * (dpi/160)
+
+
+dpi= √ (宽^2 + 高^2) / 尺寸
+
+问题就出在dpi上面，各厂商并没有按照谷歌的标准走，就算分辨率宽高是标准的，但是手机尺寸各种各样，这样就导致dpi不符合标准，因..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yugoal.github.io">
+  <img class="avatar" src="https://yugoal.github.io/images/avatar.png?v=1627959479122" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Android 屏幕适配方案
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-05-11
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="官方dp的缺点">官方dp的缺点</h2>
+<blockquote>
+<p>px = dp * (dpi/160)</p>
+</blockquote>
+<blockquote>
+<p>dpi= √ (宽^2 + 高^2) / 尺寸</p>
+</blockquote>
+<p>问题就出在dpi上面，各厂商并没有按照谷歌的标准走，就算分辨率宽高是标准的，但是手机尺寸各种各样，这样就导致dpi不符合标准，因为dpi不符合标准，所以dp就不太标准。</p>
+<h2 id="适配方案">适配方案</h2>
+<p>布局组件适配<br>
+使用dp<br>
+使用相对布局或线性布局<br>
+使用warp_content,match_parent,权重<br>
+使用minWidth,minHeight,lines等<br>
+dimens使用<br>
+布局适配（布局别名：同一个activity拥有多个布局时，可以通过values建立不同的文件夹，布局别名相同）<br>
+代码适配<br>
+今日头条方案：宽度像素/设计稿dpi求出density<br>
+makexml生成不同分辨率方案</p>
+<pre><code>import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+
+/**
+ * Created by lenovo on 2016/12/2.
+ */
+
+public class MakeXml {
+    // 生成地址 C盘layoutroot目录下
+    private final static String rootPath = &quot;C:\\layoutroot\\values-{0}x{1}\\&quot;;
+
+    /**
+     * 设置基准分辨率
+     * 一般标注按照多大的图标，这里我们就设置多大尺寸
+     */
+    private final static float dw = 720f;
+    private final static float dh = 1280f;
+
+    private final static String WTemplate = &quot;&lt;dimen name=\&quot;x{0}\&quot;&gt;{1}px&lt;/dimen&gt;\n&quot;;
+    private final static String HTemplate = &quot;&lt;dimen name=\&quot;y{0}\&quot;&gt;{1}px&lt;/dimen&gt;\n&quot;;
+
+    // 手机分辨率
+    public static void main(String [] args){
+        makeString(320, 480);
+        makeString(480, 800);
+        makeString(480, 854);
+        makeString(540, 960);
+        makeString(600, 1024);
+        makeString(720, 1184);
+        makeString(720, 1196);
+        makeString(720, 1280);
+        makeString(768, 1024);
+        makeString(800, 1280);
+        makeString(900, 1440);
+        makeString(1080, 1812);
+        makeString(1080, 1920);
+        makeString(1440, 2560);
+
+    }
+
+    public static void makeString(int w, int h) {
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;utf-8\&quot;?&gt;\n&quot;);
+        sb.append(&quot;&lt;resources&gt;&quot;);
+        float cellw = w / dw;
+        for (int i = 1; i &lt; dw; i++) {
+            sb.append(WTemplate.replace(&quot;{0}&quot;, i + &quot;&quot;).replace(&quot;{1}&quot;, change(cellw * i) + &quot;&quot;));
+        }
+        sb.append(WTemplate.replace(&quot;{0}&quot;, &quot;720&quot;).replace(&quot;{1}&quot;, w + &quot;&quot;));
+        sb.append(&quot;&lt;/resources&gt;&quot;);
+
+        StringBuffer sb2 = new StringBuffer();
+        sb2.append(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;utf-8\&quot;?&gt;\n&quot;);
+        sb2.append(&quot;&lt;resources&gt;&quot;);
+        float cellh = h / dh;
+        for (int i = 1; i &lt; dh; i++) {
+            sb2.append(HTemplate.replace(&quot;{0}&quot;, i + &quot;&quot;).replace(&quot;{1}&quot;, change(cellh * i) + &quot;&quot;));
+        }
+        sb2.append(HTemplate.replace(&quot;{0}&quot;, &quot;1280&quot;).replace(&quot;{1}&quot;, h + &quot;&quot;));
+        sb2.append(&quot;&lt;/resources&gt;&quot;);
+
+        String path = rootPath.replace(&quot;{0}&quot;, h + &quot;&quot;).replace(&quot;{1}&quot;, w + &quot;&quot;);
+        File rootFile = new File(path);
+        if (!rootFile.exists()) {
+            rootFile.mkdirs();
+        }
+        File layxFile = new File(path + &quot;lay_x.xml&quot;);
+        File layyFile = new File(path + &quot;lay_y.xml&quot;);
+        try {
+            PrintWriter pw = new PrintWriter(new FileOutputStream(layxFile));
+            pw.print(sb.toString());
+            pw.close();
+            pw = new PrintWriter(new FileOutputStream(layyFile));
+            pw.print(sb2.toString());
+            pw.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static float change(float a) {
+        int temp = (int) (a * 100);
+        return temp / 100f;
+    }
+
+}
+</code></pre>
+<h2 id="刘海屏">刘海屏</h2>
+<p>查看各厂商文档<br>
+​</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%AE%98%E6%96%B9dp%E7%9A%84%E7%BC%BA%E7%82%B9">官方dp的缺点</a></li>
+<li><a href="#%E9%80%82%E9%85%8D%E6%96%B9%E6%A1%88">适配方案</a></li>
+<li><a href="#%E5%88%98%E6%B5%B7%E5%B1%8F">刘海屏</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://yugoal.github.io/post/app-hei-bai-hua-dai-ma-shi-xian/">
+              <h3 class="post-title">
+                App黑白化代码实现
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yugoal.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

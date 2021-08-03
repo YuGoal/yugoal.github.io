@@ -1,0 +1,753 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>微信支付、支付宝支付 | Gridea</title>
+<link rel="shortcut icon" href="https://yugoal.github.io/favicon.ico?v=1627959479122">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yugoal.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="微信支付、支付宝支付 | Gridea - Atom Feed" href="https://yugoal.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="##前言
+最近公司App需要做微信支付这一块，然后就是被微信支付各种虐。所以觉得有必要把这痛苦的经历记录下来。
+####一.发送商品订单给服务器，然后从服务器获取支付请求参数
+1.首先注册，其中api为IWXAPI的实例。
+api=WXAP..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yugoal.github.io">
+  <img class="avatar" src="https://yugoal.github.io/images/avatar.png?v=1627959479122" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              微信支付、支付宝支付
+            </h2>
+            <div class="post-info">
+              <span>
+                2016-08-03
+              </span>
+              <span>
+                14 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>##前言<br>
+最近公司App需要做微信支付这一块，然后就是被微信支付各种虐。所以觉得有必要把这痛苦的经历记录下来。<br>
+####一.发送商品订单给服务器，然后从服务器获取支付请求参数<br>
+<em>1.首先注册，其中api为IWXAPI的实例。</em></p>
+<pre><code>api=WXAPIFactory.createWXAPI(context,APP_ID,false);
+api.registerApp(APP_ID);
+</code></pre>
+<p><em>2.从服务端拿到必要参数后，调支付即可，其中params是自定义的用来保存从服务端获取的发起支付请求所需要的参数对象。</em></p>
+<pre><code>if(api!=null){
+if(isWXAppInstalled()){
+PayReqreq=newPayReq();
+req.appId=APP_ID;
+req.partnerId=params.getPartnerId();
+req.prepayId=params.getPrepayId();
+req.packageValue=params.getPackageValue();
+req.nonceStr=params.getNonceStr();
+req.timeStamp=params.getTimeStamp();
+req.sign=params.getSign();
+
+api.sendReq(req);
+}
+}
+</code></pre>
+<p><em>3.WXPayEntryActivity支付回调界面</em></p>
+<pre><code>public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
+	private static final String TAG = &quot;WXPayEntryActivity&quot;;
+
+	private IWXAPI api;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.pay_result);
+		api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
+		api.handleIntent(getIntent(), this);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		api.handleIntent(intent, this);
+	}
+
+	@Override
+	public void onReq(BaseReq req) {
+	}
+
+	@Override
+	public void onResp(BaseResp resp) {
+		Log.d(TAG, &quot;onPayFinish, errCode = &quot; + resp.errCode);
+
+		if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+			if(resp.errCode == 0){
+				MyToast.showToast(this,&quot;支付成功&quot;);
+			}else if(resp.errCode == -2){
+				MyToast.showToast(this,&quot;支付取消&quot;);
+			}
+			finish();
+		}
+	}
+}
+</code></pre>
+<p>####二.App获取预支付订单，然后发送请求<br>
+<em>1.预支付请求数据</em></p>
+<pre><code>/**
+     * 预支付请求数据
+     *
+     * @return
+     */
+    private String genProductArgs() {
+        StringBuffer xml = new StringBuffer();
+
+        try {
+            String nonceStr = genNonceStr();
+            xml.append(&quot;&lt;/xml&gt;&quot;);
+            List&lt;NameValuePair&gt; packageParams = new LinkedList&lt;NameValuePair&gt;();
+            packageParams.add(new BasicNameValuePair(&quot;appid&quot;, Constants.APP_ID));
+            packageParams.add(new BasicNameValuePair(&quot;body&quot;, xiaoqu_name+&quot;--&quot;+pay_name));
+            packageParams.add(new BasicNameValuePair(&quot;mch_id&quot;, Constants.MCH_ID));
+            packageParams.add(new BasicNameValuePair(&quot;nonce_str&quot;, nonceStr));
+            packageParams.add(new BasicNameValuePair(&quot;notify_url&quot;, &quot;http://weixin.qq.com&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;out_trade_no&quot;, genOutTradNo()));
+            packageParams.add(new BasicNameValuePair(&quot;spbill_create_ip&quot;, &quot;127.0.0.1&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;total_fee&quot;, pay_num));
+            packageParams.add(new BasicNameValuePair(&quot;trade_type&quot;, &quot;APP&quot;));
+
+            String sign = genPackageSign(packageParams);
+            packageParams.add(new BasicNameValuePair(&quot;sign&quot;, sign));
+
+            String xmlstring = toXml(packageParams);
+            return new String(xmlstring.toString().getBytes(), &quot;ISO8859-1&quot;);
+
+        } catch (Exception e) {
+            Log.e(TAG, &quot;genProductArgs fail, ex = &quot; + e.getMessage());
+            return null;
+        }
+    }
+</code></pre>
+<p><em>2.获取预支付订单</em></p>
+<pre><code>/**
+     * 异步获取预支付订单 prepay_id
+     */
+    private class GetPrepayIdTask extends AsyncTask&lt;Void, Void, Map&lt;String, String&gt;&gt; {
+
+        private ProgressDialog dialog;
+
+
+        @Override
+        protected void onPreExecute() {
+            dialog = ProgressDialog.show(PayOrderActivity.this, &quot;&quot;, getString(R.string.getting_prepayid));
+        }
+
+        @Override
+        protected void onPostExecute(Map&lt;String, String&gt; result) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            sb.append(&quot;prepay_id\n&quot; + result.get(&quot;prepay_id&quot;) + &quot;\n\n&quot;);
+            resultunifiedorder = result;
+        
+            //获取支付请求数据，发起支付请求
+            genPayReq();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected Map&lt;String, String&gt; doInBackground(Void... params) {
+
+            //获取预支付订单
+            String url = String.format(&quot;https://api.mch.weixin.qq.com/pay/unifiedorder&quot;);
+            String entity = genProductArgs();
+
+            Log.e(&quot;entity&quot;, entity);
+
+            byte[] buf = Util.httpPost(url, entity);
+
+            String content = new String(buf);
+            Log.e(&quot;content&quot;, content);
+            Map&lt;String, String&gt; xml = decodeXml(content);
+
+            return xml;
+        }
+    }
+</code></pre>
+<p><em>3.全部代码</em></p>
+<pre><code>public class PayOrderActivity extends BaseActivity {
+    private static final String TAG = &quot;PayOrderActivity&quot;;
+
+    @Bind(R.id.button)
+    Button button;
+
+    PayReq req;
+    final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
+    //	TextView show;
+    Map&lt;String, String&gt; resultunifiedorder;
+    StringBuffer sb;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pay_order);
+        ButterKnife.bind(this);
+       
+        req = new PayReq();
+        sb = new StringBuffer();
+
+        msgApi.registerApp(Constants.APP_ID);
+
+
+    }
+
+    @OnClick({R.id.button})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button:
+                if(pay_id == null||pay_id.length()==0){
+                    MyToast.showToast(PayOrderActivity.this,&quot;请选择缴费类型&quot;);
+                }else {
+                    GetPrepayIdTask getPrepayId = new GetPrepayIdTask();
+                    getPrepayId.execute();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 异步获取预支付订单 prepay_id
+     */
+    private class GetPrepayIdTask extends AsyncTask&lt;Void, Void, Map&lt;String, String&gt;&gt; {
+
+        private ProgressDialog dialog;
+
+
+        @Override
+        protected void onPreExecute() {
+            dialog = ProgressDialog.show(PayOrderActivity.this, &quot;&quot;, getString(R.string.getting_prepayid));
+        }
+
+        @Override
+        protected void onPostExecute(Map&lt;String, String&gt; result) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            sb.append(&quot;prepay_id\n&quot; + result.get(&quot;prepay_id&quot;) + &quot;\n\n&quot;);
+//			show.setText(sb.toString());
+
+            resultunifiedorder = result;
+            genPayReq();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected Map&lt;String, String&gt; doInBackground(Void... params) {
+
+            //获取预支付订单
+            String url = String.format(&quot;https://api.mch.weixin.qq.com/pay/unifiedorder&quot;);
+            String entity = genProductArgs();
+
+            Log.e(&quot;entity&quot;, entity);
+
+            byte[] buf = Util.httpPost(url, entity);
+
+            String content = new String(buf);
+            Log.e(&quot;content&quot;, content);
+            Map&lt;String, String&gt; xml = decodeXml(content);
+
+            return xml;
+        }
+    }
+
+
+    /**
+     * 获取支付请求数据，发起支付请求
+     */
+    private void genPayReq() {
+        req.appId = Constants.APP_ID;
+        req.partnerId = Constants.MCH_ID;
+        req.prepayId = resultunifiedorder.get(&quot;prepay_id&quot;);
+        req.packageValue = &quot;Sign=WXPay&quot;;
+        req.nonceStr = genNonceStr();
+        req.timeStamp = String.valueOf(genTimeStamp());
+
+
+        List&lt;NameValuePair&gt; signParams = new LinkedList&lt;NameValuePair&gt;();
+        signParams.add(new BasicNameValuePair(&quot;appid&quot;, req.appId));
+        signParams.add(new BasicNameValuePair(&quot;noncestr&quot;, req.nonceStr));
+        signParams.add(new BasicNameValuePair(&quot;package&quot;, req.packageValue));
+        signParams.add(new BasicNameValuePair(&quot;partnerid&quot;, req.partnerId));
+        signParams.add(new BasicNameValuePair(&quot;prepayid&quot;, req.prepayId));
+        signParams.add(new BasicNameValuePair(&quot;timestamp&quot;, req.timeStamp));
+
+        req.sign = genAppSign(signParams);
+
+        sb.append(&quot;sign\n&quot; + req.sign + &quot;\n\n&quot;);
+        //SPUtil.put(this, &quot;uid&quot;, req.prepayId);
+//		show.setText(sb.toString());
+        sendPayReq();
+        Log.e(&quot;PayReq&quot;, signParams.toString());
+    }
+
+    /**
+     * 支付请求签名
+     *
+     * @param params
+     * @return
+     */
+    private String genAppSign(List&lt;NameValuePair&gt; params) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i &lt; params.size(); i++) {
+            sb.append(params.get(i).getName());
+            sb.append('=');
+            sb.append(params.get(i).getValue());
+            sb.append('&amp;');
+        }
+        sb.append(&quot;key=&quot;);
+        sb.append(Constants.API_KEY);
+
+        this.sb.append(&quot;sign str\n&quot; + sb.toString() + &quot;\n\n&quot;);
+        String appSign = MD5.getMessageDigest(sb.toString().getBytes()).toUpperCase();
+        Log.e(&quot;orion&quot;, appSign);
+        return appSign;
+    }
+
+    /**
+     * 预支付请求数据
+     *
+     * @return
+     */
+    private String genProductArgs() {
+        StringBuffer xml = new StringBuffer();
+
+        try {
+            String nonceStr = genNonceStr();
+
+
+            xml.append(&quot;&lt;/xml&gt;&quot;);
+            List&lt;NameValuePair&gt; packageParams = new LinkedList&lt;NameValuePair&gt;();
+            packageParams.add(new BasicNameValuePair(&quot;appid&quot;, Constants.APP_ID));
+            packageParams.add(new BasicNameValuePair(&quot;body&quot;, &quot;测试商品&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;mch_id&quot;, Constants.MCH_ID));
+            packageParams.add(new BasicNameValuePair(&quot;nonce_str&quot;, nonceStr));
+            packageParams.add(new BasicNameValuePair(&quot;notify_url&quot;, &quot;http://weixin.qq.com&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;out_trade_no&quot;, genOutTradNo()));
+            packageParams.add(new BasicNameValuePair(&quot;spbill_create_ip&quot;, &quot;127.0.0.1&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;total_fee&quot;, pay_num));
+            packageParams.add(new BasicNameValuePair(&quot;trade_type&quot;, &quot;APP&quot;));
+
+
+            String sign = genPackageSign(packageParams);
+            packageParams.add(new BasicNameValuePair(&quot;sign&quot;, sign));
+
+
+            String xmlstring = toXml(packageParams);
+            return new String(xmlstring.toString().getBytes(), &quot;ISO8859-1&quot;);
+
+        } catch (Exception e) {
+            Log.e(TAG, &quot;genProductArgs fail, ex = &quot; + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 随机字符串
+     *
+     * @return
+     */
+    private String genNonceStr() {
+        Random random = new Random();
+        return MD5.getMessageDigest(String.valueOf(random.nextInt(10000)).getBytes());
+    }
+
+    /**
+     * 订单时间
+     *
+     * @return
+     */
+    private long genTimeStamp() {
+        return System.currentTimeMillis() / 1000;
+    }
+
+
+    /**
+     * 随机产生商户订单号
+     *
+     * @return
+     */
+    private String genOutTradNo() {
+        Random random = new Random();
+        u_id = MD5.getMessageDigest(String.valueOf(random.nextInt(10000)).getBytes());
+        return u_id;
+    }
+
+    /**
+     * 生成签名 获取预支付订单签名
+     */
+    private String genPackageSign(List&lt;NameValuePair&gt; params) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i &lt; params.size(); i++) {
+            sb.append(params.get(i).getName());
+            sb.append('=');
+            sb.append(params.get(i).getValue());
+            sb.append('&amp;');
+        }
+        sb.append(&quot;key=&quot;);
+        sb.append(Constants.API_KEY);
+
+
+        String packageSign = MD5.getMessageDigest(sb.toString().getBytes()).toUpperCase();
+        Log.e(&quot;orion&quot;, packageSign);
+        return packageSign;
+    }
+
+    /**
+     * 参数转xml
+     *
+     * @param params
+     * @return
+     */
+    private String toXml(List&lt;NameValuePair&gt; params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(&quot;&lt;xml&gt;&quot;);
+        for (int i = 0; i &lt; params.size(); i++) {
+            sb.append(&quot;&lt;&quot; + params.get(i).getName() + &quot;&gt;&quot;);
+
+
+            sb.append(params.get(i).getValue());
+            sb.append(&quot;&lt;/&quot; + params.get(i).getName() + &quot;&gt;&quot;);
+        }
+        sb.append(&quot;&lt;/xml&gt;&quot;);
+
+        Log.e(&quot;orion&quot;, sb.toString());
+        return sb.toString();
+    }
+
+    /**
+     * xml 转Map
+     *
+     * @param content
+     * @return
+     */
+    public Map&lt;String, String&gt; decodeXml(String content) {
+
+        try {
+            Map&lt;String, String&gt; xml = new HashMap&lt;String, String&gt;();
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setInput(new StringReader(content));
+            int event = parser.getEventType();
+            while (event != XmlPullParser.END_DOCUMENT) {
+
+                String nodeName = parser.getName();
+                switch (event) {
+                    case XmlPullParser.START_DOCUMENT:
+
+                        break;
+                    case XmlPullParser.START_TAG:
+
+                        if (&quot;xml&quot;.equals(nodeName) == false) {
+                            //实例化student对象
+                            xml.put(nodeName, parser.nextText());
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+                event = parser.next();
+            }
+
+            return xml;
+        } catch (Exception e) {
+            Log.e(&quot;orion&quot;, e.toString());
+        }
+        return null;
+
+    }
+
+    /**
+     * 发起支付请求
+     */
+    private void sendPayReq() {
+        msgApi.registerApp(Constants.APP_ID);
+        msgApi.sendReq(req);
+    }
+}
+</code></pre>
+<p>##接下来就是踩坑</p>
+<blockquote>
+<p>1.微信支付官方demo提供的接口，每个微信账号只能调用一次，再次调用时支付返回code值为-1（貌似是因为签名的原因）</p>
+</blockquote>
+<h2 id="1接入支付宝">1.接入支付宝</h2>
+<h3 id="接入前准备">接入前准备</h3>
+<ul>
+<li>商户需要进行审核签约</li>
+<li>密钥管理（生成公私钥）</li>
+</ul>
+<h3 id="正式接入">正式接入</h3>
+<p><strong>服务端</strong><br>
+私钥必须放在服务端，签名过程必须放在服务端。</p>
+<p><strong>客户端（Android）</strong></p>
+<ol>
+<li>根据用户选择商品请求服务端获取订单和签名，</li>
+<li>根据服务端返回订单和签名调起支付宝App支付，并对支付返回结果做处理。</li>
+</ol>
+<h2 id="2android-集成并调用支付宝">2.Android 集成并调用支付宝</h2>
+<ul>
+<li>. 添加jar包</li>
+<li>. gradle中添加依赖</li>
+</ul>
+<hr>
+<pre><code>PayTask payTask = new PayTask(AboutUsActivity.this);
+	Map&lt;String, String&gt; result = payTask.payV2(orderInfo, true);
+</code></pre>
+<pre><code>orderInfo ：服务端返回的订单信息。
+</code></pre>
+<h2 id="3返回结果处理全部代码">3.返回结果处理（全部代码）</h2>
+<pre><code>/**
+ * 支付宝
+ * @param strURL
+ */
+private void aliPay(String strURL) {
+    Observable.create(new ObservableOnSubscribe&lt;Object&gt;() {
+        @Override
+        public void subscribe(@NonNull ObservableEmitter&lt;Object&gt; e) throws Exception {
+            String orderInfo = OkClient.get(strURL, new JSONObject());//获取订单信息
+            orderInfo = orderInfo.replace(&quot;amp;&quot;, &quot;&quot;);//后台PHP，返回的所有&amp;参数都变成&amp;amp，所有需要替换。
+            PayTask payTask = new PayTask(AboutUsActivity.this);
+            Map&lt;String, String&gt; result = payTask.payV2(orderInfo, true);
+            e.onNext(result);
+        }
+    }).compose(RxUtil.activityLifecycle(this))
+            .compose(RxUtil.io())
+            .subscribe(new Consumer&lt;Object&gt;() {
+                @Override
+                public void accept(@NonNull Object o) throws Exception {
+                    closeProgressDialog();
+                    PayResult payResult = new PayResult((Map&lt;String, String&gt;) o);
+                    /**
+                     对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为9000则代表支付成功
+                    if (TextUtils.equals(resultStatus, AliPay.PAY_OK)) {//---------&gt;支付成功
+                        finish();
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_FAIL)) {//---------&gt;支付失败
+                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+                        ToastUtils.showToast(payResult.getMemo());
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_CANCEL)) {//---------&gt;交易取消
+                        ToastUtils.showToast(payResult.getMemo());
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_NET_ERROR)) {//----------&gt;网络出现错误
+                        ToastUtils.showToast(payResult.getMemo());
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_REPEAT)) {//------&gt;交易重复
+                    }
+                }
+            });
+}
+</code></pre>
+<h2 id="4回调类">4.回调类</h2>
+<pre><code>/**
+* 支付宝回调code值
+*/
+
+public class AliPay {
+
+	public static final String PAY_OK = &quot;9000&quot;;//支付宝支付成功
+	public static final String PAY_PROCESSING_UNKNOWN = &quot;8000&quot;;//正在处理中，支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态
+	public static final String PAY_FAIL = &quot;4000&quot;;//支付宝支付失败
+	public static final String PAY_REPEAT = &quot;5000&quot;;//支付宝支付重复请求
+	public static final String PAY_CANCEL = &quot;6001&quot;;//用户中途取消
+	public static final String PAY_NET_ERROR = &quot;6002&quot;;//网络连接出错
+	public static final String PAY_UNKNOWN = &quot;6004&quot;;//支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态
+}
+
+
+/**
+* 支付宝回调
+*/
+
+public class PayResult {
+	private String resultStatus;
+	private String result;
+	private String memo;
+
+	public PayResult(Map&lt;String, String&gt; rawResult) {
+	    if (rawResult == null) {
+	        return;
+	    }
+
+	    for (String key : rawResult.keySet()) {
+	        if (TextUtils.equals(key, &quot;resultStatus&quot;)) {
+	            resultStatus = rawResult.get(key);
+	        } else if (TextUtils.equals(key, &quot;result&quot;)) {
+	            result = rawResult.get(key);
+	        } else if (TextUtils.equals(key, &quot;memo&quot;)) {
+	            memo = rawResult.get(key);
+	        }
+	    }
+	}
+
+	@Override
+	public String toString() {
+	    return &quot;resultStatus={&quot; + resultStatus + &quot;};memo={&quot; + memo
+            + &quot;};result={&quot; + result + &quot;}&quot;;
+	}
+
+	/**
+	 * @return the resultStatus
+	 */
+	public String getResultStatus() {
+	    return resultStatus;
+	}
+
+	/**
+	 * @return the memo
+	 */
+	public String getMemo() {
+	    return memo;
+	}
+
+	/**
+	 * @return the result
+	 */
+	public String getResult() {
+	    return result;
+	}
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1%E6%8E%A5%E5%85%A5%E6%94%AF%E4%BB%98%E5%AE%9D">1.接入支付宝</a>
+<ul>
+<li><a href="#%E6%8E%A5%E5%85%A5%E5%89%8D%E5%87%86%E5%A4%87">接入前准备</a></li>
+<li><a href="#%E6%AD%A3%E5%BC%8F%E6%8E%A5%E5%85%A5">正式接入</a></li>
+</ul>
+</li>
+<li><a href="#2android-%E9%9B%86%E6%88%90%E5%B9%B6%E8%B0%83%E7%94%A8%E6%94%AF%E4%BB%98%E5%AE%9D">2.Android 集成并调用支付宝</a></li>
+<li><a href="#3%E8%BF%94%E5%9B%9E%E7%BB%93%E6%9E%9C%E5%A4%84%E7%90%86%E5%85%A8%E9%83%A8%E4%BB%A3%E7%A0%81">3.返回结果处理（全部代码）</a></li>
+<li><a href="#4%E5%9B%9E%E8%B0%83%E7%B1%BB">4.回调类</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yugoal.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
