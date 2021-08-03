@@ -1,22 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://yugoal.github.io</id>
-    <title>Gridea</title>
-    <updated>2021-08-03T02:41:34.411Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://yugoal.github.io"/>
-    <link rel="self" href="https://yugoal.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
-    <logo>https://yugoal.github.io/images/avatar.png</logo>
-    <icon>https://yugoal.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, Gridea</rights>
-    <entry>
-        <title type="html"><![CDATA[仿自如 App 裸眼 3D 效果]]></title>
-        <id>https://yugoal.github.io/post/fang-zi-ru-app-luo-yan-3d-xiao-guo/</id>
-        <link href="https://yugoal.github.io/post/fang-zi-ru-app-luo-yan-3d-xiao-guo/">
-        </link>
-        <updated>2021-08-03T02:36:14.000Z</updated>
-        <content type="html"><![CDATA[<ol>
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>仿自如 App 裸眼 3D 效果 | Gridea</title>
+<link rel="shortcut icon" href="https://yugoal.github.io/favicon.ico?v=1627958490701">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yugoal.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="仿自如 App 裸眼 3D 效果 | Gridea - Atom Feed" href="https://yugoal.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+获取手机重力传感器值
+
+public class GyroscopeManager implements SensorEventListener {
+
+    // 将纳秒转化为秒
+    private static final flo..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yugoal.github.io">
+  <img class="avatar" src="https://yugoal.github.io/images/avatar.png?v=1627958490701" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              仿自如 App 裸眼 3D 效果
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-08-03
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <ol>
 <li>获取手机重力传感器值</li>
 </ol>
 <pre><code class="language-java">public class GyroscopeManager implements SensorEventListener {
@@ -220,6 +298,68 @@
 </code></pre>
 <p><a href="https://github.com/WinterRunner/gyroscope">陀螺仪图片转动</a><br>
 <a href="https://juejin.cn/post/6989227733410644005">自如裸眼3D原理</a>​</p>
-]]></content>
-    </entry>
-</feed>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yugoal.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
