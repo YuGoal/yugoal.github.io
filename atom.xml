@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://yugoal.github.io</id>
     <title>Gridea</title>
-    <updated>2021-08-03T02:58:56.461Z</updated>
+    <updated>2021-08-03T03:02:56.827Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://yugoal.github.io"/>
     <link rel="self" href="https://yugoal.github.io/atom.xml"/>
@@ -10,15 +10,6 @@
     <logo>https://yugoal.github.io/images/avatar.png</logo>
     <icon>https://yugoal.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Gridea</rights>
-    <entry>
-        <title type="html"><![CDATA[5种方法完美解决android软键盘挡住输入框方法详解]]></title>
-        <id>https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/</id>
-        <link href="https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/">
-        </link>
-        <updated>2021-08-03T02:46:00.000Z</updated>
-        <content type="html"><![CDATA[<p><a href="https://cloud.tencent.com/developer/article/1741756">5种方法完美解决android软键盘挡住输入框方法详解</a></p>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[仿自如 App 裸眼 3D 效果]]></title>
         <id>https://yugoal.github.io/post/fang-zi-ru-app-luo-yan-3d-xiao-guo/</id>
@@ -332,6 +323,15 @@
 Application中的代码根据需求来使用多线程执行。<br>
 线程池核心数量定义：Math.max(2,Math.min(CPU_COUNT-1,4))<br>
 ​</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[5种方法完美解决android软键盘挡住输入框方法详解]]></title>
+        <id>https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/</id>
+        <link href="https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/">
+        </link>
+        <updated>2021-07-05T02:46:00.000Z</updated>
+        <content type="html"><![CDATA[<p><a href="https://cloud.tencent.com/developer/article/1741756">5种方法完美解决android软键盘挡住输入框方法详解</a></p>
 ]]></content>
     </entry>
     <entry>
@@ -686,272 +686,6 @@ hotpointMissionOperator.addListener(new HotpointMissionOperatorListener() {
 ]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[调用百度、高德地图App，百度地图网页版，App定位]]></title>
-        <id>https://yugoal.github.io/post/diao-yong-bai-du-gao-de-di-tu-appbai-du-di-tu-wang-ye-ban-app-ding-wei/</id>
-        <link href="https://yugoal.github.io/post/diao-yong-bai-du-gao-de-di-tu-appbai-du-di-tu-wang-ye-ban-app-ding-wei/">
-        </link>
-        <updated>2017-07-20T08:55:44.000Z</updated>
-        <summary type="html"><![CDATA[<h1 id="1首先判断是否安装了目标地图app">1.首先判断是否安装了目标地图App</h1>
-<pre><code>//判断是否安装目标应用
-public static boolean isInstallByread(String packageName) {
-    return new File(&quot;/data/data/&quot; + packageName)
-            .exists();
-}
-</code></pre>
-<h1 id="2调用百度地图app">2.调用百度地图App</h1>
-<pre><code>/**
- * 调起百度客户端 自定义打点
- * @param activity
- * @param content 目的地(如：天安门) 
- * mode 导航方式
- */
-public static void openBaiduMarkerMap(Context activity, String content) {
-    Intent intent = new Intent();
-    intent.setData(Uri.parse(&quot;baidumap://map/direction?region=&amp;origin=&amp;destination=&quot;+content+&quot;&amp;mode=driving&quot;));
-    activity.startActivity(intent);
-}
-</code></pre>
-<blockquote>
-<p>调起百度地图官方<a href="http://lbsyun.baidu.com/index.php?title=uri/api/android">http://lbsyun.baidu.com/index.php?title=uri/api/android</a></p>
-</blockquote>
-<h1 id="3调用高德地图app">3.调用高德地图App</h1>
-<pre><code>/**
- * 启动高德App进行导航
- * @param poiname 非必填 POI 名称
- * @param lat 必填 纬度
- * @param lon 必填 经度
- * @param dev 必填 是否偏移(0:lat 和 lon 是已经加密后的,不需要国测加密; 1:需要国测加密)
- * @param style 必填 导航方式(0 速度快; 1 费用少; 2 路程短; 3 不走高速；4 躲避拥堵；5 不走高速且避免收费；6 不走高速且躲避拥堵；7 躲避收费和拥堵；8 不走高速躲避收费和拥堵))
- */
-public static  void goToNaviActivity(Context context, String poiname , String lat , String lon , String dev , String style){
-    StringBuffer stringBuffer  = new StringBuffer(&quot;androidamap://navi?sourceApplication=&quot;)
-            .append(AppInfoUtils.getApplicationName());
-    if (!TextUtils.isEmpty(poiname)){
-        stringBuffer.append(&quot;&amp;poiname=&quot;).append(poiname);
-    }
-    stringBuffer
-            .append(&quot;&amp;lat=&quot;).append(lat)
-            .append(&quot;&amp;lon=&quot;).append(lon)
-            .append(&quot;&amp;destination=&quot;).append(context)
-            .append(&quot;&amp;dev=&quot;).append(dev)
-            .append(&quot;&amp;style=&quot;).append(style);
-
-    Intent intent = new Intent(&quot;android.intent.action.VIEW&quot;, android.net.Uri.parse(stringBuffer.toString()));
-    intent.setPackage(&quot;com.autonavi.minimap&quot;);
-    context.startActivity(intent);
-}
-</code></pre>
-<pre><code>/**
-     * 启动高德App进行导航 (直接传地址，无需经纬度)
-     */
-    public static void openNaviActivity(Context context, String mDestination) {
-        try {
-            Intent intent = Intent.getIntent(&quot;androidamap://route?sourceApplication=softname&quot; + &quot;&amp;sname=我的位置&amp;dname=&quot; + mDestination + &quot;&amp;dev=0&amp;m=0&amp;t=1&quot;);
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            intent.setPackage(&quot;com.autonavi.minimap&quot;);// pkg=com.autonavi.minimap
-            intent.addCategory(&quot;android.intent.category.DEFAULT&quot;);
-            context.startActivity(intent);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-</code></pre>
-<blockquote>
-<p>更新：使用地址调用地图，无需经纬度</p>
-</blockquote>
-<h1 id="4调用百度地图网页版必须填写起点和终点">4.调用百度地图网页版(必须填写起点和终点)</h1>
-<pre><code>/**
- * 打开百度网页版 导航
- * @param activity
- * @param location 起点位置
- * @param content 目的地
- */
-public static void openBrosserNaviMap(Context activity, Location location,String content) {
-    Uri webpage = Uri.parse(&quot;http://api.map.baidu.com/marker?location=&quot;+
-            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+
-            &quot;&amp;title=&quot;+content+
-            &quot;&amp;content=&quot;+content+
-            &quot;&amp;output=html&quot;);
-    Uri mapUri = Uri.parse(&quot;http://api.map.baidu.com/direction?origin=latlng:&quot; +
-            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+ &quot;|name:&quot; + content + &quot;&amp;destination=latlng:&quot; +
-            &quot;|name:&quot; + content + &quot;&amp;mode=driving&amp;region=&quot;+
-            &quot;&amp;output=html&quot;);
-    Log.d(&quot;百度地图&quot;, &quot;openBrosserNaviMap: &quot;+webpage.toString());
-
-    Intent webIntent = new Intent(Intent.ACTION_VIEW,webpage);
-    activity.startActivity(webIntent);
-}
-</code></pre>
-<h1 id="5app定位">5.App定位</h1>
-<h3 id="1获取位置管理器">1.获取位置管理器</h3>
-<pre><code>locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-</code></pre>
-<h3 id="2获取位置提供器gps或是network">2.获取位置提供器GPS或是NetWork</h3>
-<pre><code>List&lt;String&gt; providers = locationManager.getProviders(true);
-    if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-        //如果是网络定位
-        locationProvider = LocationManager.NETWORK_PROVIDER;
-       
-    } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
-        //如果是GPS定位
-        locationProvider = LocationManager.GPS_PROVIDER;
-       
-    } else {
-        ToastUtils.showToast(&quot;没有可用的位置提供器&quot;);
-        return;
-    }
-</code></pre>
-<h3 id="3获取上次的位置一般第一次运行此值为null">3.获取上次的位置，一般第一次运行，此值为null</h3>
-<pre><code>if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &amp;&amp; ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-       
-        return;
-    }
-    mLocation = locationManager.getLastKnownLocation(locationProvider);
-    if (mLocation != null) {
-        Log.d(TAG, &quot;onLocationChanged: &quot; + mLocation);
-      
-    } else {
-        // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
-        locationManager.requestLocationUpdates(locationProvider, 0, 0, mListener);
-    }
-</code></pre>
-<h3 id="4位置监听器">4.位置监听器</h3>
-<pre><code>LocationListener mListener = new LocationListener() {    @Override    public void onStatusChanged(String provider, int status, Bundle extras) {    }    @Override    public void onProviderEnabled(String provider) {    }    @Override    public void onProviderDisabled(String provider) {    }    // 如果位置发生变化，重新显示    @Override    public void onLocationChanged(Location location) {        mLocation = location;        String address = &quot;纬度：&quot; + location.getLatitude() + &quot;经度：&quot; + location.getLongitude();        Log.d(TAG, &quot;onLocationChanged: &quot; + address);        dialog.dismiss();    }};
-</code></pre>
-<h1 id="最后别忘了申请系统权限">最后！别忘了申请系统权限！！！</h1>
-]]></summary>
-        <content type="html"><![CDATA[<h1 id="1首先判断是否安装了目标地图app">1.首先判断是否安装了目标地图App</h1>
-<pre><code>//判断是否安装目标应用
-public static boolean isInstallByread(String packageName) {
-    return new File(&quot;/data/data/&quot; + packageName)
-            .exists();
-}
-</code></pre>
-<h1 id="2调用百度地图app">2.调用百度地图App</h1>
-<pre><code>/**
- * 调起百度客户端 自定义打点
- * @param activity
- * @param content 目的地(如：天安门) 
- * mode 导航方式
- */
-public static void openBaiduMarkerMap(Context activity, String content) {
-    Intent intent = new Intent();
-    intent.setData(Uri.parse(&quot;baidumap://map/direction?region=&amp;origin=&amp;destination=&quot;+content+&quot;&amp;mode=driving&quot;));
-    activity.startActivity(intent);
-}
-</code></pre>
-<blockquote>
-<p>调起百度地图官方<a href="http://lbsyun.baidu.com/index.php?title=uri/api/android">http://lbsyun.baidu.com/index.php?title=uri/api/android</a></p>
-</blockquote>
-<h1 id="3调用高德地图app">3.调用高德地图App</h1>
-<pre><code>/**
- * 启动高德App进行导航
- * @param poiname 非必填 POI 名称
- * @param lat 必填 纬度
- * @param lon 必填 经度
- * @param dev 必填 是否偏移(0:lat 和 lon 是已经加密后的,不需要国测加密; 1:需要国测加密)
- * @param style 必填 导航方式(0 速度快; 1 费用少; 2 路程短; 3 不走高速；4 躲避拥堵；5 不走高速且避免收费；6 不走高速且躲避拥堵；7 躲避收费和拥堵；8 不走高速躲避收费和拥堵))
- */
-public static  void goToNaviActivity(Context context, String poiname , String lat , String lon , String dev , String style){
-    StringBuffer stringBuffer  = new StringBuffer(&quot;androidamap://navi?sourceApplication=&quot;)
-            .append(AppInfoUtils.getApplicationName());
-    if (!TextUtils.isEmpty(poiname)){
-        stringBuffer.append(&quot;&amp;poiname=&quot;).append(poiname);
-    }
-    stringBuffer
-            .append(&quot;&amp;lat=&quot;).append(lat)
-            .append(&quot;&amp;lon=&quot;).append(lon)
-            .append(&quot;&amp;destination=&quot;).append(context)
-            .append(&quot;&amp;dev=&quot;).append(dev)
-            .append(&quot;&amp;style=&quot;).append(style);
-
-    Intent intent = new Intent(&quot;android.intent.action.VIEW&quot;, android.net.Uri.parse(stringBuffer.toString()));
-    intent.setPackage(&quot;com.autonavi.minimap&quot;);
-    context.startActivity(intent);
-}
-</code></pre>
-<pre><code>/**
-     * 启动高德App进行导航 (直接传地址，无需经纬度)
-     */
-    public static void openNaviActivity(Context context, String mDestination) {
-        try {
-            Intent intent = Intent.getIntent(&quot;androidamap://route?sourceApplication=softname&quot; + &quot;&amp;sname=我的位置&amp;dname=&quot; + mDestination + &quot;&amp;dev=0&amp;m=0&amp;t=1&quot;);
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            intent.setPackage(&quot;com.autonavi.minimap&quot;);// pkg=com.autonavi.minimap
-            intent.addCategory(&quot;android.intent.category.DEFAULT&quot;);
-            context.startActivity(intent);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-</code></pre>
-<blockquote>
-<p>更新：使用地址调用地图，无需经纬度</p>
-</blockquote>
-<h1 id="4调用百度地图网页版必须填写起点和终点">4.调用百度地图网页版(必须填写起点和终点)</h1>
-<pre><code>/**
- * 打开百度网页版 导航
- * @param activity
- * @param location 起点位置
- * @param content 目的地
- */
-public static void openBrosserNaviMap(Context activity, Location location,String content) {
-    Uri webpage = Uri.parse(&quot;http://api.map.baidu.com/marker?location=&quot;+
-            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+
-            &quot;&amp;title=&quot;+content+
-            &quot;&amp;content=&quot;+content+
-            &quot;&amp;output=html&quot;);
-    Uri mapUri = Uri.parse(&quot;http://api.map.baidu.com/direction?origin=latlng:&quot; +
-            location.getLatitude() +&quot;,&quot;+ location.getLongitude()+ &quot;|name:&quot; + content + &quot;&amp;destination=latlng:&quot; +
-            &quot;|name:&quot; + content + &quot;&amp;mode=driving&amp;region=&quot;+
-            &quot;&amp;output=html&quot;);
-    Log.d(&quot;百度地图&quot;, &quot;openBrosserNaviMap: &quot;+webpage.toString());
-
-    Intent webIntent = new Intent(Intent.ACTION_VIEW,webpage);
-    activity.startActivity(webIntent);
-}
-</code></pre>
-<h1 id="5app定位">5.App定位</h1>
-<h3 id="1获取位置管理器">1.获取位置管理器</h3>
-<pre><code>locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-</code></pre>
-<h3 id="2获取位置提供器gps或是network">2.获取位置提供器GPS或是NetWork</h3>
-<pre><code>List&lt;String&gt; providers = locationManager.getProviders(true);
-    if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-        //如果是网络定位
-        locationProvider = LocationManager.NETWORK_PROVIDER;
-       
-    } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
-        //如果是GPS定位
-        locationProvider = LocationManager.GPS_PROVIDER;
-       
-    } else {
-        ToastUtils.showToast(&quot;没有可用的位置提供器&quot;);
-        return;
-    }
-</code></pre>
-<h3 id="3获取上次的位置一般第一次运行此值为null">3.获取上次的位置，一般第一次运行，此值为null</h3>
-<pre><code>if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &amp;&amp; ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-       
-        return;
-    }
-    mLocation = locationManager.getLastKnownLocation(locationProvider);
-    if (mLocation != null) {
-        Log.d(TAG, &quot;onLocationChanged: &quot; + mLocation);
-      
-    } else {
-        // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
-        locationManager.requestLocationUpdates(locationProvider, 0, 0, mListener);
-    }
-</code></pre>
-<h3 id="4位置监听器">4.位置监听器</h3>
-<pre><code>LocationListener mListener = new LocationListener() {    @Override    public void onStatusChanged(String provider, int status, Bundle extras) {    }    @Override    public void onProviderEnabled(String provider) {    }    @Override    public void onProviderDisabled(String provider) {    }    // 如果位置发生变化，重新显示    @Override    public void onLocationChanged(Location location) {        mLocation = location;        String address = &quot;纬度：&quot; + location.getLatitude() + &quot;经度：&quot; + location.getLongitude();        Log.d(TAG, &quot;onLocationChanged: &quot; + address);        dialog.dismiss();    }};
-</code></pre>
-<h1 id="最后别忘了申请系统权限">最后！别忘了申请系统权限！！！</h1>
-<!-- more -->
-]]></content>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[WebViewjavascriptBridge 关于setWebViewClient 拦截后JS失效的问题]]></title>
         <id>https://yugoal.github.io/post/webviewjavascriptbridge-guan-yu-setwebviewclient-lan-jie-hou-js-shi-xiao-de-wen-ti/</id>
         <link href="https://yugoal.github.io/post/webviewjavascriptbridge-guan-yu-setwebviewclient-lan-jie-hou-js-shi-xiao-de-wen-ti/">
@@ -988,6 +722,611 @@ public boolean shouldOverrideUrlLoading(WebView view, String url) {
     view.loadUrl(url,webView.getMap());//重写最后一步
     return super.shouldOverrideUrlLoading(view, url);
   }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[微信支付、支付宝支付]]></title>
+        <id>https://yugoal.github.io/post/wei-xin-zhi-fu-zhi-fu-bao-zhi-fu/</id>
+        <link href="https://yugoal.github.io/post/wei-xin-zhi-fu-zhi-fu-bao-zhi-fu/">
+        </link>
+        <updated>2016-08-03T02:53:31.000Z</updated>
+        <content type="html"><![CDATA[<p>##前言<br>
+最近公司App需要做微信支付这一块，然后就是被微信支付各种虐。所以觉得有必要把这痛苦的经历记录下来。<br>
+####一.发送商品订单给服务器，然后从服务器获取支付请求参数<br>
+<em>1.首先注册，其中api为IWXAPI的实例。</em></p>
+<pre><code>api=WXAPIFactory.createWXAPI(context,APP_ID,false);
+api.registerApp(APP_ID);
+</code></pre>
+<p><em>2.从服务端拿到必要参数后，调支付即可，其中params是自定义的用来保存从服务端获取的发起支付请求所需要的参数对象。</em></p>
+<pre><code>if(api!=null){
+if(isWXAppInstalled()){
+PayReqreq=newPayReq();
+req.appId=APP_ID;
+req.partnerId=params.getPartnerId();
+req.prepayId=params.getPrepayId();
+req.packageValue=params.getPackageValue();
+req.nonceStr=params.getNonceStr();
+req.timeStamp=params.getTimeStamp();
+req.sign=params.getSign();
+
+api.sendReq(req);
+}
+}
+</code></pre>
+<p><em>3.WXPayEntryActivity支付回调界面</em></p>
+<pre><code>public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
+	private static final String TAG = &quot;WXPayEntryActivity&quot;;
+
+	private IWXAPI api;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.pay_result);
+		api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
+		api.handleIntent(getIntent(), this);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		api.handleIntent(intent, this);
+	}
+
+	@Override
+	public void onReq(BaseReq req) {
+	}
+
+	@Override
+	public void onResp(BaseResp resp) {
+		Log.d(TAG, &quot;onPayFinish, errCode = &quot; + resp.errCode);
+
+		if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+			if(resp.errCode == 0){
+				MyToast.showToast(this,&quot;支付成功&quot;);
+			}else if(resp.errCode == -2){
+				MyToast.showToast(this,&quot;支付取消&quot;);
+			}
+			finish();
+		}
+	}
+}
+</code></pre>
+<p>####二.App获取预支付订单，然后发送请求<br>
+<em>1.预支付请求数据</em></p>
+<pre><code>/**
+     * 预支付请求数据
+     *
+     * @return
+     */
+    private String genProductArgs() {
+        StringBuffer xml = new StringBuffer();
+
+        try {
+            String nonceStr = genNonceStr();
+            xml.append(&quot;&lt;/xml&gt;&quot;);
+            List&lt;NameValuePair&gt; packageParams = new LinkedList&lt;NameValuePair&gt;();
+            packageParams.add(new BasicNameValuePair(&quot;appid&quot;, Constants.APP_ID));
+            packageParams.add(new BasicNameValuePair(&quot;body&quot;, xiaoqu_name+&quot;--&quot;+pay_name));
+            packageParams.add(new BasicNameValuePair(&quot;mch_id&quot;, Constants.MCH_ID));
+            packageParams.add(new BasicNameValuePair(&quot;nonce_str&quot;, nonceStr));
+            packageParams.add(new BasicNameValuePair(&quot;notify_url&quot;, &quot;http://weixin.qq.com&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;out_trade_no&quot;, genOutTradNo()));
+            packageParams.add(new BasicNameValuePair(&quot;spbill_create_ip&quot;, &quot;127.0.0.1&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;total_fee&quot;, pay_num));
+            packageParams.add(new BasicNameValuePair(&quot;trade_type&quot;, &quot;APP&quot;));
+
+            String sign = genPackageSign(packageParams);
+            packageParams.add(new BasicNameValuePair(&quot;sign&quot;, sign));
+
+            String xmlstring = toXml(packageParams);
+            return new String(xmlstring.toString().getBytes(), &quot;ISO8859-1&quot;);
+
+        } catch (Exception e) {
+            Log.e(TAG, &quot;genProductArgs fail, ex = &quot; + e.getMessage());
+            return null;
+        }
+    }
+</code></pre>
+<p><em>2.获取预支付订单</em></p>
+<pre><code>/**
+     * 异步获取预支付订单 prepay_id
+     */
+    private class GetPrepayIdTask extends AsyncTask&lt;Void, Void, Map&lt;String, String&gt;&gt; {
+
+        private ProgressDialog dialog;
+
+
+        @Override
+        protected void onPreExecute() {
+            dialog = ProgressDialog.show(PayOrderActivity.this, &quot;&quot;, getString(R.string.getting_prepayid));
+        }
+
+        @Override
+        protected void onPostExecute(Map&lt;String, String&gt; result) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            sb.append(&quot;prepay_id\n&quot; + result.get(&quot;prepay_id&quot;) + &quot;\n\n&quot;);
+            resultunifiedorder = result;
+        
+            //获取支付请求数据，发起支付请求
+            genPayReq();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected Map&lt;String, String&gt; doInBackground(Void... params) {
+
+            //获取预支付订单
+            String url = String.format(&quot;https://api.mch.weixin.qq.com/pay/unifiedorder&quot;);
+            String entity = genProductArgs();
+
+            Log.e(&quot;entity&quot;, entity);
+
+            byte[] buf = Util.httpPost(url, entity);
+
+            String content = new String(buf);
+            Log.e(&quot;content&quot;, content);
+            Map&lt;String, String&gt; xml = decodeXml(content);
+
+            return xml;
+        }
+    }
+</code></pre>
+<p><em>3.全部代码</em></p>
+<pre><code>public class PayOrderActivity extends BaseActivity {
+    private static final String TAG = &quot;PayOrderActivity&quot;;
+
+    @Bind(R.id.button)
+    Button button;
+
+    PayReq req;
+    final IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
+    //	TextView show;
+    Map&lt;String, String&gt; resultunifiedorder;
+    StringBuffer sb;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pay_order);
+        ButterKnife.bind(this);
+       
+        req = new PayReq();
+        sb = new StringBuffer();
+
+        msgApi.registerApp(Constants.APP_ID);
+
+
+    }
+
+    @OnClick({R.id.button})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button:
+                if(pay_id == null||pay_id.length()==0){
+                    MyToast.showToast(PayOrderActivity.this,&quot;请选择缴费类型&quot;);
+                }else {
+                    GetPrepayIdTask getPrepayId = new GetPrepayIdTask();
+                    getPrepayId.execute();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 异步获取预支付订单 prepay_id
+     */
+    private class GetPrepayIdTask extends AsyncTask&lt;Void, Void, Map&lt;String, String&gt;&gt; {
+
+        private ProgressDialog dialog;
+
+
+        @Override
+        protected void onPreExecute() {
+            dialog = ProgressDialog.show(PayOrderActivity.this, &quot;&quot;, getString(R.string.getting_prepayid));
+        }
+
+        @Override
+        protected void onPostExecute(Map&lt;String, String&gt; result) {
+            if (dialog != null) {
+                dialog.dismiss();
+            }
+            sb.append(&quot;prepay_id\n&quot; + result.get(&quot;prepay_id&quot;) + &quot;\n\n&quot;);
+//			show.setText(sb.toString());
+
+            resultunifiedorder = result;
+            genPayReq();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected Map&lt;String, String&gt; doInBackground(Void... params) {
+
+            //获取预支付订单
+            String url = String.format(&quot;https://api.mch.weixin.qq.com/pay/unifiedorder&quot;);
+            String entity = genProductArgs();
+
+            Log.e(&quot;entity&quot;, entity);
+
+            byte[] buf = Util.httpPost(url, entity);
+
+            String content = new String(buf);
+            Log.e(&quot;content&quot;, content);
+            Map&lt;String, String&gt; xml = decodeXml(content);
+
+            return xml;
+        }
+    }
+
+
+    /**
+     * 获取支付请求数据，发起支付请求
+     */
+    private void genPayReq() {
+        req.appId = Constants.APP_ID;
+        req.partnerId = Constants.MCH_ID;
+        req.prepayId = resultunifiedorder.get(&quot;prepay_id&quot;);
+        req.packageValue = &quot;Sign=WXPay&quot;;
+        req.nonceStr = genNonceStr();
+        req.timeStamp = String.valueOf(genTimeStamp());
+
+
+        List&lt;NameValuePair&gt; signParams = new LinkedList&lt;NameValuePair&gt;();
+        signParams.add(new BasicNameValuePair(&quot;appid&quot;, req.appId));
+        signParams.add(new BasicNameValuePair(&quot;noncestr&quot;, req.nonceStr));
+        signParams.add(new BasicNameValuePair(&quot;package&quot;, req.packageValue));
+        signParams.add(new BasicNameValuePair(&quot;partnerid&quot;, req.partnerId));
+        signParams.add(new BasicNameValuePair(&quot;prepayid&quot;, req.prepayId));
+        signParams.add(new BasicNameValuePair(&quot;timestamp&quot;, req.timeStamp));
+
+        req.sign = genAppSign(signParams);
+
+        sb.append(&quot;sign\n&quot; + req.sign + &quot;\n\n&quot;);
+        //SPUtil.put(this, &quot;uid&quot;, req.prepayId);
+//		show.setText(sb.toString());
+        sendPayReq();
+        Log.e(&quot;PayReq&quot;, signParams.toString());
+    }
+
+    /**
+     * 支付请求签名
+     *
+     * @param params
+     * @return
+     */
+    private String genAppSign(List&lt;NameValuePair&gt; params) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i &lt; params.size(); i++) {
+            sb.append(params.get(i).getName());
+            sb.append('=');
+            sb.append(params.get(i).getValue());
+            sb.append('&amp;');
+        }
+        sb.append(&quot;key=&quot;);
+        sb.append(Constants.API_KEY);
+
+        this.sb.append(&quot;sign str\n&quot; + sb.toString() + &quot;\n\n&quot;);
+        String appSign = MD5.getMessageDigest(sb.toString().getBytes()).toUpperCase();
+        Log.e(&quot;orion&quot;, appSign);
+        return appSign;
+    }
+
+    /**
+     * 预支付请求数据
+     *
+     * @return
+     */
+    private String genProductArgs() {
+        StringBuffer xml = new StringBuffer();
+
+        try {
+            String nonceStr = genNonceStr();
+
+
+            xml.append(&quot;&lt;/xml&gt;&quot;);
+            List&lt;NameValuePair&gt; packageParams = new LinkedList&lt;NameValuePair&gt;();
+            packageParams.add(new BasicNameValuePair(&quot;appid&quot;, Constants.APP_ID));
+            packageParams.add(new BasicNameValuePair(&quot;body&quot;, &quot;测试商品&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;mch_id&quot;, Constants.MCH_ID));
+            packageParams.add(new BasicNameValuePair(&quot;nonce_str&quot;, nonceStr));
+            packageParams.add(new BasicNameValuePair(&quot;notify_url&quot;, &quot;http://weixin.qq.com&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;out_trade_no&quot;, genOutTradNo()));
+            packageParams.add(new BasicNameValuePair(&quot;spbill_create_ip&quot;, &quot;127.0.0.1&quot;));
+            packageParams.add(new BasicNameValuePair(&quot;total_fee&quot;, pay_num));
+            packageParams.add(new BasicNameValuePair(&quot;trade_type&quot;, &quot;APP&quot;));
+
+
+            String sign = genPackageSign(packageParams);
+            packageParams.add(new BasicNameValuePair(&quot;sign&quot;, sign));
+
+
+            String xmlstring = toXml(packageParams);
+            return new String(xmlstring.toString().getBytes(), &quot;ISO8859-1&quot;);
+
+        } catch (Exception e) {
+            Log.e(TAG, &quot;genProductArgs fail, ex = &quot; + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 随机字符串
+     *
+     * @return
+     */
+    private String genNonceStr() {
+        Random random = new Random();
+        return MD5.getMessageDigest(String.valueOf(random.nextInt(10000)).getBytes());
+    }
+
+    /**
+     * 订单时间
+     *
+     * @return
+     */
+    private long genTimeStamp() {
+        return System.currentTimeMillis() / 1000;
+    }
+
+
+    /**
+     * 随机产生商户订单号
+     *
+     * @return
+     */
+    private String genOutTradNo() {
+        Random random = new Random();
+        u_id = MD5.getMessageDigest(String.valueOf(random.nextInt(10000)).getBytes());
+        return u_id;
+    }
+
+    /**
+     * 生成签名 获取预支付订单签名
+     */
+    private String genPackageSign(List&lt;NameValuePair&gt; params) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i &lt; params.size(); i++) {
+            sb.append(params.get(i).getName());
+            sb.append('=');
+            sb.append(params.get(i).getValue());
+            sb.append('&amp;');
+        }
+        sb.append(&quot;key=&quot;);
+        sb.append(Constants.API_KEY);
+
+
+        String packageSign = MD5.getMessageDigest(sb.toString().getBytes()).toUpperCase();
+        Log.e(&quot;orion&quot;, packageSign);
+        return packageSign;
+    }
+
+    /**
+     * 参数转xml
+     *
+     * @param params
+     * @return
+     */
+    private String toXml(List&lt;NameValuePair&gt; params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(&quot;&lt;xml&gt;&quot;);
+        for (int i = 0; i &lt; params.size(); i++) {
+            sb.append(&quot;&lt;&quot; + params.get(i).getName() + &quot;&gt;&quot;);
+
+
+            sb.append(params.get(i).getValue());
+            sb.append(&quot;&lt;/&quot; + params.get(i).getName() + &quot;&gt;&quot;);
+        }
+        sb.append(&quot;&lt;/xml&gt;&quot;);
+
+        Log.e(&quot;orion&quot;, sb.toString());
+        return sb.toString();
+    }
+
+    /**
+     * xml 转Map
+     *
+     * @param content
+     * @return
+     */
+    public Map&lt;String, String&gt; decodeXml(String content) {
+
+        try {
+            Map&lt;String, String&gt; xml = new HashMap&lt;String, String&gt;();
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setInput(new StringReader(content));
+            int event = parser.getEventType();
+            while (event != XmlPullParser.END_DOCUMENT) {
+
+                String nodeName = parser.getName();
+                switch (event) {
+                    case XmlPullParser.START_DOCUMENT:
+
+                        break;
+                    case XmlPullParser.START_TAG:
+
+                        if (&quot;xml&quot;.equals(nodeName) == false) {
+                            //实例化student对象
+                            xml.put(nodeName, parser.nextText());
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        break;
+                }
+                event = parser.next();
+            }
+
+            return xml;
+        } catch (Exception e) {
+            Log.e(&quot;orion&quot;, e.toString());
+        }
+        return null;
+
+    }
+
+    /**
+     * 发起支付请求
+     */
+    private void sendPayReq() {
+        msgApi.registerApp(Constants.APP_ID);
+        msgApi.sendReq(req);
+    }
+}
+</code></pre>
+<p>##接下来就是踩坑</p>
+<blockquote>
+<p>1.微信支付官方demo提供的接口，每个微信账号只能调用一次，再次调用时支付返回code值为-1（貌似是因为签名的原因）</p>
+</blockquote>
+<h2 id="1接入支付宝">1.接入支付宝</h2>
+<h3 id="接入前准备">接入前准备</h3>
+<ul>
+<li>商户需要进行审核签约</li>
+<li>密钥管理（生成公私钥）</li>
+</ul>
+<h3 id="正式接入">正式接入</h3>
+<p><strong>服务端</strong><br>
+私钥必须放在服务端，签名过程必须放在服务端。</p>
+<p><strong>客户端（Android）</strong></p>
+<ol>
+<li>根据用户选择商品请求服务端获取订单和签名，</li>
+<li>根据服务端返回订单和签名调起支付宝App支付，并对支付返回结果做处理。</li>
+</ol>
+<h2 id="2android-集成并调用支付宝">2.Android 集成并调用支付宝</h2>
+<ul>
+<li>. 添加jar包</li>
+<li>. gradle中添加依赖</li>
+</ul>
+<hr>
+<pre><code>PayTask payTask = new PayTask(AboutUsActivity.this);
+	Map&lt;String, String&gt; result = payTask.payV2(orderInfo, true);
+</code></pre>
+<pre><code>orderInfo ：服务端返回的订单信息。
+</code></pre>
+<h2 id="3返回结果处理全部代码">3.返回结果处理（全部代码）</h2>
+<pre><code>/**
+ * 支付宝
+ * @param strURL
+ */
+private void aliPay(String strURL) {
+    Observable.create(new ObservableOnSubscribe&lt;Object&gt;() {
+        @Override
+        public void subscribe(@NonNull ObservableEmitter&lt;Object&gt; e) throws Exception {
+            String orderInfo = OkClient.get(strURL, new JSONObject());//获取订单信息
+            orderInfo = orderInfo.replace(&quot;amp;&quot;, &quot;&quot;);//后台PHP，返回的所有&amp;参数都变成&amp;amp，所有需要替换。
+            PayTask payTask = new PayTask(AboutUsActivity.this);
+            Map&lt;String, String&gt; result = payTask.payV2(orderInfo, true);
+            e.onNext(result);
+        }
+    }).compose(RxUtil.activityLifecycle(this))
+            .compose(RxUtil.io())
+            .subscribe(new Consumer&lt;Object&gt;() {
+                @Override
+                public void accept(@NonNull Object o) throws Exception {
+                    closeProgressDialog();
+                    PayResult payResult = new PayResult((Map&lt;String, String&gt;) o);
+                    /**
+                     对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为9000则代表支付成功
+                    if (TextUtils.equals(resultStatus, AliPay.PAY_OK)) {//---------&gt;支付成功
+                        finish();
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_FAIL)) {//---------&gt;支付失败
+                        // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+                        ToastUtils.showToast(payResult.getMemo());
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_CANCEL)) {//---------&gt;交易取消
+                        ToastUtils.showToast(payResult.getMemo());
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_NET_ERROR)) {//----------&gt;网络出现错误
+                        ToastUtils.showToast(payResult.getMemo());
+                    } else if (TextUtils.equals(resultStatus, AliPay.PAY_REPEAT)) {//------&gt;交易重复
+                    }
+                }
+            });
+}
+</code></pre>
+<h2 id="4回调类">4.回调类</h2>
+<pre><code>/**
+* 支付宝回调code值
+*/
+
+public class AliPay {
+
+	public static final String PAY_OK = &quot;9000&quot;;//支付宝支付成功
+	public static final String PAY_PROCESSING_UNKNOWN = &quot;8000&quot;;//正在处理中，支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态
+	public static final String PAY_FAIL = &quot;4000&quot;;//支付宝支付失败
+	public static final String PAY_REPEAT = &quot;5000&quot;;//支付宝支付重复请求
+	public static final String PAY_CANCEL = &quot;6001&quot;;//用户中途取消
+	public static final String PAY_NET_ERROR = &quot;6002&quot;;//网络连接出错
+	public static final String PAY_UNKNOWN = &quot;6004&quot;;//支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态
+}
+
+
+/**
+* 支付宝回调
+*/
+
+public class PayResult {
+	private String resultStatus;
+	private String result;
+	private String memo;
+
+	public PayResult(Map&lt;String, String&gt; rawResult) {
+	    if (rawResult == null) {
+	        return;
+	    }
+
+	    for (String key : rawResult.keySet()) {
+	        if (TextUtils.equals(key, &quot;resultStatus&quot;)) {
+	            resultStatus = rawResult.get(key);
+	        } else if (TextUtils.equals(key, &quot;result&quot;)) {
+	            result = rawResult.get(key);
+	        } else if (TextUtils.equals(key, &quot;memo&quot;)) {
+	            memo = rawResult.get(key);
+	        }
+	    }
+	}
+
+	@Override
+	public String toString() {
+	    return &quot;resultStatus={&quot; + resultStatus + &quot;};memo={&quot; + memo
+            + &quot;};result={&quot; + result + &quot;}&quot;;
+	}
+
+	/**
+	 * @return the resultStatus
+	 */
+	public String getResultStatus() {
+	    return resultStatus;
+	}
+
+	/**
+	 * @return the memo
+	 */
+	public String getMemo() {
+	    return memo;
+	}
+
+	/**
+	 * @return the result
+	 */
+	public String getResult() {
+	    return result;
+	}
 }
 </code></pre>
 ]]></content>

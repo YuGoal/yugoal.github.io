@@ -1,125 +1,145 @@
 <html>
   <head>
-    <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+<meta charset="utf-8" >
+
 <title>Gridea</title>
-<link rel="shortcut icon" href="https://yugoal.github.io/favicon.ico?v=1627959479122">
-<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://yugoal.github.io/favicon.ico?v=1627959766178">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://yugoal.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="Gridea - Atom Feed" href="https://yugoal.github.io/atom.xml">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="温故而知新" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
   </head>
   <body>
-    <div class="main">
-      <div class="main-content">
-        <div class="site-header">
-  <a href="https://yugoal.github.io">
-  <img class="avatar" src="https://yugoal.github.io/images/avatar.png?v=1627959479122" alt="">
-  </a>
-  <h1 class="site-title">
-    Gridea
-  </h1>
-  <p class="site-description">
-    温故而知新
-  </p>
-  <div class="menu-container">
-    
-      
-        <a href="/" class="menu">
-          首页
-        </a>
-      
-    
-  </div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://yugoal.github.io">
+        <img class="avatar" src="https://yugoal.github.io/images/avatar.png?v=1627959766178" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://yugoal.github.io">
+        <h1 class="site-title">Gridea</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
   </div>
 </div>
 
-    
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
         
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+        <div class="content-container">
+          
+          
 
 <div class="archives-container">
   
     <h2 class="year">2021</h2>
     
       
-        <a href="https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/" class="post">
-          <h2 class="post-title">
-            5种方法完美解决android软键盘挡住输入框方法详解
-          </h2>
-          <div class="time">2021-08-03</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/fang-zi-ru-app-luo-yan-3d-xiao-guo/">
+            <h2 class="post-title">
+              仿自如 App 裸眼 3D 效果
+              <small>2021-08-03</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/fang-zi-ru-app-luo-yan-3d-xiao-guo/" class="post">
-          <h2 class="post-title">
-            仿自如 App 裸眼 3D 效果
-          </h2>
-          <div class="time">2021-08-03</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/app-qi-dong-you-hua/">
+            <h2 class="post-title">
+              App启动优化
+              <small>2021-07-29</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/app-qi-dong-you-hua/" class="post">
-          <h2 class="post-title">
-            App启动优化
-          </h2>
-          <div class="time">2021-07-29</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/5-chong-fang-fa-wan-mei-jie-jue-android-ruan-jian-pan-dang-zhu-shu-ru-kuang-fang-fa-xiang-jie/">
+            <h2 class="post-title">
+              5种方法完美解决android软键盘挡住输入框方法详解
+              <small>2021-07-05</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/android-ping-mu-gua-pei-fang-an/" class="post">
-          <h2 class="post-title">
-            Android 屏幕适配方案
-          </h2>
-          <div class="time">2021-05-11</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/android-ping-mu-gua-pei-fang-an/">
+            <h2 class="post-title">
+              Android 屏幕适配方案
+              <small>2021-05-11</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/app-hei-bai-hua-dai-ma-shi-xian/" class="post">
-          <h2 class="post-title">
-            App黑白化代码实现
-          </h2>
-          <div class="time">2021-04-06</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/app-hei-bai-hua-dai-ma-shi-xian/">
+            <h2 class="post-title">
+              App黑白化代码实现
+              <small>2021-04-06</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/android-yu-webview-de-js-jiao-hu/" class="post">
-          <h2 class="post-title">
-            Android与webview的js交互
-          </h2>
-          <div class="time">2021-03-23</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/android-yu-webview-de-js-jiao-hu/">
+            <h2 class="post-title">
+              Android与webview的js交互
+              <small>2021-03-23</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/dji-sdk-hotpoint-mission-shi-xian-si-lu/" class="post">
-          <h2 class="post-title">
-            DJI-SDK Hotpoint Mission 实现思路
-          </h2>
-          <div class="time">2021-03-03</div>
-        </a>
-      
-    
+        <article class="post">
+          <a href="https://yugoal.github.io/post/dji-sdk-hotpoint-mission-shi-xian-si-lu/">
+            <h2 class="post-title">
+              DJI-SDK Hotpoint Mission 实现思路
+              <small>2021-03-03</small>
+            </h2>
+          </a>
+        </article>
       
     
       
@@ -146,30 +166,25 @@
       
     
       
-        <a href="https://yugoal.github.io/post/rabbitmq-android-ke-hu-duan/" class="post">
-          <h2 class="post-title">
-            RabbitMQ—Android客户端
-          </h2>
-          <div class="time">2017-09-10</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/rabbitmq-android-ke-hu-duan/">
+            <h2 class="post-title">
+              RabbitMQ—Android客户端
+              <small>2017-09-10</small>
+            </h2>
+          </a>
+        </article>
       
     
       
-        <a href="https://yugoal.github.io/post/diao-yong-bai-du-gao-de-di-tu-appbai-du-di-tu-wang-ye-ban-app-ding-wei/" class="post">
-          <h2 class="post-title">
-            调用百度、高德地图App，百度地图网页版，App定位
-          </h2>
-          <div class="time">2017-07-20</div>
-        </a>
-      
-    
-      
-        <a href="https://yugoal.github.io/post/webviewjavascriptbridge-guan-yu-setwebviewclient-lan-jie-hou-js-shi-xiao-de-wen-ti/" class="post">
-          <h2 class="post-title">
-            WebViewjavascriptBridge 关于setWebViewClient 拦截后JS失效的问题
-          </h2>
-          <div class="time">2017-03-01</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/webviewjavascriptbridge-guan-yu-setwebviewclient-lan-jie-hou-js-shi-xiao-de-wen-ti/">
+            <h2 class="post-title">
+              WebViewjavascriptBridge 关于setWebViewClient 拦截后JS失效的问题
+              <small>2017-03-01</small>
+            </h2>
+          </a>
+        </article>
       
     
       
@@ -196,34 +211,58 @@
       
     
       
-    
-      
-        <a href="https://yugoal.github.io/post/wei-xin-zhi-fu-zhi-fu-bao-zhi-fu/" class="post">
-          <h2 class="post-title">
-            微信支付、支付宝支付
-          </h2>
-          <div class="time">2016-08-03</div>
-        </a>
+        <article class="post">
+          <a href="https://yugoal.github.io/post/wei-xin-zhi-fu-zhi-fu-bao-zhi-fu/">
+            <h2 class="post-title">
+              微信支付、支付宝支付
+              <small>2016-08-03</small>
+            </h2>
+          </a>
+        </article>
       
     
   
 </div>
 
-    
-        <div class="pagination-container">
-  
-  
-</div>
 
-    
+        </div>
+
         <div class="site-footer">
-  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
-  <a class="rss" href="https://yugoal.github.io/atom.xml" target="_blank">
-    <i class="ri-rss-line"></i> RSS
-  </a>
+  <div class="slogan">温故而知新</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://yugoal.github.io/atom.xml" target="_blank">RSS</a>
 </div>
+
 
       </div>
+      <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
     </div>
   </body>
 </html>
